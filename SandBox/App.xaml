@@ -1,0 +1,24 @@
+﻿<Application x:Class="SandBox.App"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="clr-namespace:SandBox.ViewModel"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:ignore="http://www.galasoft.ch/ignore"
+			 ShutdownMode="OnExplicitShutdown"
+			 mc:Ignorable="d ignore">
+	
+	<Application.Resources>
+        <ResourceDictionary>
+            <!--Global View Model Locator-->
+            <vm:ViewModelLocator x:Key="Locator"
+							 d:IsDataSource="True" />
+        
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="NotifyIconResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+   
+    	
+</Application>
