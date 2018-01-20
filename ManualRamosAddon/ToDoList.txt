@@ -1,0 +1,9 @@
+﻿xAdd Button to delete a feeder.  Delete from the main display.
+Add Feeder Demand% to feeder
+xAdd dropdown to select Oxide instead of manually entering (to elminate typos)
+xReplace feeder# entry with source selection & change main display to display source instead of dropdown.
+xAdd control period entry to main display
+xAdd Aggression to each feeder (or a single aggression....probably 1 for each)
+xAdd Ramos control status light.  if ramos control disabled, disable the manual control as well.
+Add code to adjust feeder(s) according to rolling vs target every "control period" analysis.
+xfix save/init

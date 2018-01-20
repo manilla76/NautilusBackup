@@ -32,5 +32,26 @@
     <Setting Name="NumFeeders" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="F1Agg" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="F2Agg" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="F3Agg" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ControlPeriod" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Kp" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="Ki" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.02</Value>
+    </Setting>
+    <Setting Name="Kd" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.4</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -9,20 +9,25 @@
         Title="Add a new Feeder to Control"
         DataContext="{Binding AddFeederVM, Source={StaticResource Locator}}">
 
-    <Grid DataContext="{Binding AppVM, Source={StaticResource Locator}}">
+    <Grid DataContext="{Binding AppVM.NewFeeder, Source={StaticResource Locator}}">
         <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Width="100" Text="Feeder Number: "/>
-                <TextBox Width="50" Text="{Binding NewFeeder.FeederNumber}"/>
+                <ComboBox ItemsSource="{Binding Sources}" SelectedIndex="{Binding FeederNumber}" DisplayMemberPath="SourceEstimateName"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Width="100" Text="Oxide: "/>
-                <TextBox Width="50"  Text="{Binding NewFeeder.Oxide}"/>
+                <!--<TextBox Width="50"  Text="{Binding Oxide}"/>-->
+                <ComboBox ItemsSource="{Binding Oxides}" SelectedItem="{Binding Oxide}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Width="100" Text="Max Delta: "/>
-                <TextBox Width="50" Text="{Binding NewFeeder.MaxDelta}"/>
-            </StackPanel>           
+                <TextBox Width="50" Text="{Binding MaxDelta}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100" Text="Aggression: "/>
+                <TextBox Width="50" Text="{Binding FeederAggression}"/>
+            </StackPanel>
         </StackPanel>
         
     </Grid>

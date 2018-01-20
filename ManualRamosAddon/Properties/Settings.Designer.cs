@@ -142,5 +142,89 @@ namespace ManualRamosAddon.Properties {
                 this["NumFeeders"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int F1Agg {
+            get {
+                return ((int)(this["F1Agg"]));
+            }
+            set {
+                this["F1Agg"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int F2Agg {
+            get {
+                return ((int)(this["F2Agg"]));
+            }
+            set {
+                this["F2Agg"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int F3Agg {
+            get {
+                return ((int)(this["F3Agg"]));
+            }
+            set {
+                this["F3Agg"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int ControlPeriod {
+            get {
+                return ((int)(this["ControlPeriod"]));
+            }
+            set {
+                this["ControlPeriod"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1")]
+        public float Kp {
+            get {
+                return ((float)(this["Kp"]));
+            }
+            set {
+                this["Kp"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.02")]
+        public float Ki {
+            get {
+                return ((float)(this["Ki"]));
+            }
+            set {
+                this["Ki"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.4")]
+        public float Kd {
+            get {
+                return ((float)(this["Kd"]));
+            }
+            set {
+                this["Kd"] = value;
+            }
+        }
     }
 }

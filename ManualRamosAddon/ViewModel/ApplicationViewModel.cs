@@ -1,9 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using ManualRamosAddon.Model;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows;
-using System;
 
 namespace ManualRamosAddon
 {
@@ -21,10 +18,18 @@ namespace ManualRamosAddon
         public ObservableCollection<FeederViewModel> feeders;
         private FeederViewModel newFeeder;
         private int numFeeders;
+        private int controlPeriod;
+        private int solveCount;
+        internal float MaxError = 10;
 
+        public int ControlPeriod { get => (controlPeriod < 1) ? 1 : controlPeriod; set => Set(ref controlPeriod, value); }
         public ObservableCollection<FeederViewModel> Feeders { get { return feeders; } set { feeders = value; RaisePropertyChanged("Feeders"); } }
         public FeederViewModel NewFeeder { get => newFeeder; set => Set(ref newFeeder, value); }
         public int NumFeeders { get => numFeeders; set => Set(ref numFeeders, value); }
+        public int SolveCount { get => solveCount; set => Set(ref solveCount, value); }
+        public float Kp { get; set; }
+        public float Ki { get; set; }
+        public float Kd { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the ApplicationViewModel class.
@@ -35,6 +40,7 @@ namespace ManualRamosAddon
             feeders = new ObservableCollection<FeederViewModel>();
             _dataService = dataService;
             InitFeeders();
+            SolveCount = 0;
         }
 
         private void InitFeeders()
@@ -42,7 +48,7 @@ namespace ManualRamosAddon
             // read in Feeder data from save
             // create and load feederViewModel for each feeder to be controlled.
             // Feeders.Add(new FeederViewModel { FeederNumber = 1, MaxDelta = 0.1f, Oxide = "Fe2O3" });
-            Model.ThermoInterface.LoadConfig(this);
+            Model.ThermoInterface.LoadConfig();
         }
     }
 }

@@ -14,6 +14,7 @@ using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using ManualRamosAddon.Model;
 using System.Windows;
+using System;
 
 namespace ManualRamosAddon.ViewModel
 {
@@ -28,20 +29,7 @@ namespace ManualRamosAddon.ViewModel
     {
         static ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            if (ViewModelBase.IsInDesignModeStatic)
-            {
-                SimpleIoc.Default.Register<IDataService, Design.DesignDataService>();
-            }
-            else
-            {
-                SimpleIoc.Default.Register<IDataService, DataService>();
-            }
-            SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<FeederViewModel>();
-            SimpleIoc.Default.Register<ApplicationViewModel>(true);
-            SimpleIoc.Default.Register<AddFeederViewModel>();
         }
 
         /// <summary>
@@ -81,6 +69,24 @@ namespace ManualRamosAddon.ViewModel
         /// </summary>
         public static void Cleanup()
         {
+        }
+
+        internal static void Init()
+        {
+            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+
+            if (ViewModelBase.IsInDesignModeStatic)
+            {
+                SimpleIoc.Default.Register<IDataService, Design.DesignDataService>();
+            }
+            else
+            {
+                SimpleIoc.Default.Register<IDataService, DataService>();
+            }
+            SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<FeederViewModel>();
+            SimpleIoc.Default.Register<ApplicationViewModel>(true);
+            SimpleIoc.Default.Register<AddFeederViewModel>();
         }
     }
 }

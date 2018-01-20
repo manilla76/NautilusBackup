@@ -33,9 +33,11 @@
                 <DataTemplate>
                     <Button Command="{Binding OpenCommand, Mode=OneWay}" Background="Transparent">
                         <StackPanel HorizontalAlignment="Center">
+                            <Button Width="10" Height="10" Content="x" Background="red" Foreground="White" HorizontalAlignment="Right" ToolTip="Delete" Command="{Binding DeleteCommand}"/>
                             <TextBlock Text="{Binding Oxide}" HorizontalAlignment="Center"/>
                             <thermowpfwidgets:BulbWidget Height="20" Width="20" CurrentStatus="{Binding IsManual, Converter={StaticResource BooleanToBulbStatusConverter}}" HorizontalAlignment="Center"/>
                             <TextBlock Text="{Binding MaxDelta, StringFormat=Max&#x0394;: \{0\}}" HorizontalAlignment="Center"/>
+                            <!--<TextBlock Text="{Binding SourceEstimateName}" HorizontalAlignment="Center"/>-->
                             <ComboBox ItemsSource="{Binding Sources}" SelectedIndex="{Binding FeederNumber}" DisplayMemberPath="SourceEstimateName"/>
                         </StackPanel>
                     </Button>
@@ -50,7 +52,26 @@
                    HorizontalAlignment="Center"
                    TextWrapping="Wrap" />
         <Button Content="Add A Feeder" Command="{Binding Main.OpenCommand, Mode=OneWay}" Height="30" Width="80" 
-                HorizontalAlignment="Left" Margin="10,0,0,0"
-                CommandParameter="{Binding ElementName=MainWindow1}" DataContext="{Binding Source={StaticResource Locator}}"/>
+                    HorizontalAlignment="Left" Margin="10,0,0,0"
+                    CommandParameter="{Binding ElementName=MainWindow1}" DataContext="{Binding Source={StaticResource Locator}}"/>
+        <StackPanel VerticalAlignment="Bottom" Margin="2">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Kp"/>
+                <TextBox Text="{Binding Kp}" Width="28" Margin="2,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Kd"/>
+                <TextBox Text="{Binding Kd}" Width="28" Margin="2,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Ki "/>
+                <TextBox Text="{Binding Ki}" Width="28" Margin="2,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Control Period"/>
+                <TextBox Text="{Binding ControlPeriod}" Width="20"/>
+            </StackPanel>
+            <TextBlock Text="{Binding SolveCount, StringFormat=SolveCount\= \{0\}}"/>
+        </StackPanel>
     </Grid>
 </Window>

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using System.Collections.ObjectModel;
 
 namespace ManualRamosAddon
 {
