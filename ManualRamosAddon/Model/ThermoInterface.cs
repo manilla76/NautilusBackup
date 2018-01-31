@@ -16,6 +16,7 @@ namespace ManualRamosAddon.Model
         public static ThermoArgonautViewerLibrary.Argonaut OmniView = new ThermoArgonautViewerLibrary.Argonaut();
         public static BOSCtrl Ramos;
         public static ServerItemUpdate ServerItemUpdate;
+        public static Datapool.ITagInfo SwitchTag;
 
         public static void Init()
         {
@@ -139,10 +140,19 @@ namespace ManualRamosAddon.Model
 
         public static void InitSources(ObservableCollection<SourceData> sources)
         {
-            var results = OmniView.GetRaMOSFeederSetup();            
-            sources.Clear();
-            foreach (var source in results.Items.Select(f => new { f.SourceEstimateName, f.Index }))
-                sources.Add(new SourceData(source.SourceEstimateName, source.Index));
+            try
+            {
+                var results = OmniView.GetRaMOSFeederSetup();
+                sources.Clear();
+                foreach (var source in results.Items.Select(f => new { f.SourceEstimateName, f.Index }))
+                    sources.Add(new SourceData(source.SourceEstimateName, source.Index));
+            }
+            catch (Exception)
+            {
+
+                App.Current.MainWindow.Close();
+            }            
+
         }
 
         public static void LoadConfig()
@@ -152,6 +162,10 @@ namespace ManualRamosAddon.Model
             App.AppVM.Kp = Properties.Settings.Default.Kp;
             App.AppVM.Ki = Properties.Settings.Default.Ki;
             App.AppVM.Kd = Properties.Settings.Default.Kd;
+            App.AppVM.RecipeSwitchGroup = Properties.Settings.Default.RecipeGroup;
+            App.AppVM.RecipeSwitchTag = Properties.Settings.Default.RecipeTag;
+            UpdateSwitchTag();
+
             if (App.AppVM.NumFeeders < 1)
             {
                 //try
@@ -171,12 +185,45 @@ namespace ManualRamosAddon.Model
 
         }
 
+        private static void UpdateSwitchTag()
+        {
+            if (App.AppVM.RecipeSwitchGroup == string.Empty || App.AppVM.RecipeSwitchTag == string.Empty)
+            {
+                return;
+            }
+            if (SwitchTag != null)
+            {
+                SwitchTag.UpdateValueEvent -= SwitchTag_UpdateValueEvent;
+                SwitchTag.Dispose();
+            }
+            SwitchTag = Datapool.DatapoolSvr.CreateTagInfo(App.AppVM.RecipeSwitchGroup, App.AppVM.RecipeSwitchTag, Datapool.dpTypes.STRING);
+            SwitchTag.UpdateValueEvent += SwitchTag_UpdateValueEvent;
+        }
+
+        private static void SwitchTag_UpdateValueEvent(Datapool.ITagInfo e)
+        {
+            try
+            {
+                var blendControl = OmniView.GetRaMOSConfiguration();
+                blendControl.RecipeName = e.AsString;
+                OmniView.SetRaMOSConfiguration(blendControl);
+                App.AppVM.ErrorCode = string.Empty;
+            }
+            catch (Exception)
+            {
+                App.AppVM.ErrorCode = "Recipe in switch tag not valid. No change to current recipe.";
+            }
+        }
+
         public static void SaveConfig()
         {
             Properties.Settings.Default.ControlPeriod = App.AppVM.ControlPeriod;
             Properties.Settings.Default.Kp = App.AppVM.Kp;
             Properties.Settings.Default.Ki = App.AppVM.Ki;
-            Properties.Settings.Default.Kd = App.AppVM.Kd; 
+            Properties.Settings.Default.Kd = App.AppVM.Kd;
+            Properties.Settings.Default.RecipeGroup = App.AppVM.RecipeSwitchGroup;
+            Properties.Settings.Default.RecipeTag = App.AppVM.RecipeSwitchTag;
+
             App.AppVM.NumFeeders = Properties.Settings.Default.NumFeeders = App.AppVM.Feeders.Count;
             if (App.AppVM.NumFeeders < 1)
             {
@@ -209,6 +256,13 @@ namespace ManualRamosAddon.Model
             Properties.Settings.Default.Save();
             return;
             
+        }
+        public static void CloseApp()
+        {
+            if (SwitchTag != null)
+            {                
+                SwitchTag.Dispose();
+            }            
         }
     }
 }

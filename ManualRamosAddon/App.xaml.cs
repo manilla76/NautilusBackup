@@ -24,7 +24,10 @@ namespace ManualRamosAddon
         private static void NotifyIconViewModel_OnExiting(object sender, System.EventArgs e)
         {
             Model.ThermoInterface.SaveConfig();
-            Current.Dispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Normal);
+            Model.ThermoInterface.CloseApp();
+            notifyIcon.Visibility = Visibility.Hidden;
+            Current.Shutdown();
+            // Current.Dispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Normal);
         }
 
         protected override void OnStartup(StartupEventArgs e)

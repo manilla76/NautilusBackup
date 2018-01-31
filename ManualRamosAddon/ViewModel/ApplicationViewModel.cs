@@ -30,6 +30,9 @@ namespace ManualRamosAddon
         public float Kp { get; set; }
         public float Ki { get; set; }
         public float Kd { get; set; }
+        public string RecipeSwitchGroup { get; set; }
+        public string RecipeSwitchTag { get; set; }
+        public string ErrorCode { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the ApplicationViewModel class.
