@@ -14,11 +14,5 @@ namespace ManualRamosAddon.Model
             var item = new DataItem();
             callback(item, null);
         }
-
-        public async Task<string> GetDataAsync()
-        {
-            throw new NotImplementedException();
-            await Task.Delay(1);            
-        }
     }    
 }

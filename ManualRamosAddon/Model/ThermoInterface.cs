@@ -149,8 +149,8 @@ namespace ManualRamosAddon.Model
             }
             catch (Exception)
             {
-
-                App.Current.MainWindow.Close();
+                return;         //  Ramos wasn't running...sources don't get initialized.  Program should message and close but not sure how to do that.
+                
             }            
 
         }
@@ -192,12 +192,10 @@ namespace ManualRamosAddon.Model
                 return;
             }
             if (SwitchTag != null)
-            {
-                SwitchTag.UpdateValueEvent -= SwitchTag_UpdateValueEvent;
                 SwitchTag.Dispose();
-            }
             SwitchTag = Datapool.DatapoolSvr.CreateTagInfo(App.AppVM.RecipeSwitchGroup, App.AppVM.RecipeSwitchTag, Datapool.dpTypes.STRING);
             SwitchTag.UpdateValueEvent += SwitchTag_UpdateValueEvent;
+            SwitchTag_UpdateValueEvent(SwitchTag);
         }
 
         private static void SwitchTag_UpdateValueEvent(Datapool.ITagInfo e)
@@ -257,11 +255,14 @@ namespace ManualRamosAddon.Model
             return;
             
         }
-        public static void CloseApp()
+        public static void CloseAppAsync()
         {
+            
             if (SwitchTag != null)
-            {                
+            {
+                SwitchTag.UpdateValueEvent -= SwitchTag_UpdateValueEvent;
                 SwitchTag.Dispose();
+                Datapool.DatapoolSvr.Dispose();
             }            
         }
     }

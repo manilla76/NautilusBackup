@@ -2,6 +2,8 @@
 using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Ioc;
 using Hardcodet.Wpf.TaskbarNotification;
+using System.Threading.Tasks;
+using System;
 
 namespace ManualRamosAddon
 {
@@ -24,7 +26,8 @@ namespace ManualRamosAddon
         private static void NotifyIconViewModel_OnExiting(object sender, System.EventArgs e)
         {
             Model.ThermoInterface.SaveConfig();
-            Model.ThermoInterface.CloseApp();
+            var task = Task.Factory.StartNew(() => Model.ThermoInterface.CloseAppAsync());
+            task.Wait(1000);
             notifyIcon.Visibility = Visibility.Hidden;
             Current.Shutdown();
             // Current.Dispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Normal);
@@ -35,7 +38,19 @@ namespace ManualRamosAddon
             base.OnStartup(e);
             //create the notifyicon (it's a resource declared in NotifyIconResources.xaml
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+            // DependencyCheck();
             Model.ThermoInterface.Init();
+            App.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+        }
+
+        private void DependencyCheck()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.InnerException.Message);
         }
 
         protected override void OnExit(ExitEventArgs e)

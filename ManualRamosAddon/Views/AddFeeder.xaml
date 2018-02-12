@@ -7,7 +7,7 @@
         mc:Ignorable="d ignore"
         Height="400" Width="800"
         Title="Edit Feeder Properties"
-        Icon="C:\Users\john.grothe\source\repos\NautilusBackup\ManualRamosAddon\Icons\ManualRamosIcon.ico"
+        Icon="/ManualRamosAddon;component/Icons/ManualRamosIcon.ico"
         DataContext="{Binding AddFeederVM, Source={StaticResource Locator}}">
 
     <Grid DataContext="{Binding AppVM.NewFeeder, Source={StaticResource Locator}}">

@@ -36,6 +36,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>ManualRamosAddon.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BlendingOptimizationEngine">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Thermo\Nautilus\Omni\Service\BlendingOptimizationEngine.dll</HintPath>

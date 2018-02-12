@@ -11,7 +11,7 @@
         Height="430"
         Width="300"
         Title="Manual Ramos Addon"
-        Icon="C:\Users\john.grothe\source\repos\NautilusBackup\ManualRamosAddon\Icons\ManualRamosIcon.ico"
+        Icon="/ManualRamosAddon;component/Icons/ManualRamosIcon.ico"
         DataContext="{Binding AppVM, Source={StaticResource Locator}}">
 
     <Window.Resources>
@@ -73,16 +73,18 @@
                 <TextBox Text="{Binding ControlPeriod}" Width="20"/>
             </StackPanel>
             <TextBlock Text="{Binding SolveCount, StringFormat=SolveCount\= \{0\}}"/>
-            <TextBlock Text="Automatic Recipe Switch"/>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="DpGroup"/>
-                <TextBox Text="{Binding RecipeSwitchGroup}" Width="100"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="DpTag"/>
-                <TextBox Text="{Binding RecipeSwitchTag}" Width="100"/>
-            </StackPanel>
-            <TextBlock Text="{Binding ErrorCode, FallbackValue=null, Mode=Default}" Foreground="Red"/>
+            <Expander Header="Automatic Recipe Switch">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="DpGroup"/>
+                        <TextBox Text="{Binding RecipeSwitchGroup}" Width="100"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="DpTag"/>
+                        <TextBox Text="{Binding RecipeSwitchTag}" Width="100"/>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
         </StackPanel>
     </Grid>
 </Window>
