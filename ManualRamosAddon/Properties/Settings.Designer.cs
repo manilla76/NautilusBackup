@@ -250,5 +250,17 @@ namespace ManualRamosAddon.Properties {
                 this["RecipeTag"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FeederDictionary {
+            get {
+                return ((string)(this["FeederDictionary"]));
+            }
+            set {
+                this["FeederDictionary"] = value;
+            }
+        }
     }
 }

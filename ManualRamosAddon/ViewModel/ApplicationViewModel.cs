@@ -42,8 +42,10 @@ namespace ManualRamosAddon
             App.AppVM = this;
             feeders = new ObservableCollection<FeederViewModel>();
             _dataService = dataService;
-            InitFeeders();
             SolveCount = 0;
+            //ThermoArgonautViewerLibrary.CommonSystemViewer.System = new ThermoArgonautViewerLibrary.CommonSystemViewer(new System.Windows.Controls.ContentControl());
+            //ThermoArgonautViewerLibrary.CommonSystemViewer.System.ConnectToComputer();
+            InitFeeders();
         }
 
         private void InitFeeders()
