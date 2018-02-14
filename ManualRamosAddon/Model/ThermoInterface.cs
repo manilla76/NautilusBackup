@@ -33,6 +33,7 @@ namespace ManualRamosAddon.Model
             
             Ramos = new BOSCtrl(null);
             Ramos.SolveReport.UpdateEvent += SolveReport_UpdateEvent;
+            profile = profile ?? new Dictionary<string, BlendingOptimizationSystem.Feeders>();
             //var feeders = OmniView.GetRaMOSFeederSetup();
             //Ramos.Feeders.UpdateEvent += Feeders_UpdateEvent;
             ServerItemUpdate = new ServerItemUpdate();
