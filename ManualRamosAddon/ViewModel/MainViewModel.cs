@@ -47,9 +47,9 @@ namespace ManualRamosAddon
                         FeederViewModel newFeederVM = new FeederViewModel { FeederNumber = 1, IsManual = false, Oxide = "Fe2O3", MaxDelta = 0.1f };
                         AppVM.Feeders.Add(newFeederVM);
                         AppVM.NewFeeder = newFeederVM;
-                        Messenger.Default.Send(new NotificationMessage("Show Dialog"));
-                    }));                  
-
+                        Messenger.Default.Send(new NotificationMessage("AddFeeder"));
+                    }));
+        
         ////public override void Cleanup()
         ////{
         ////    // Clean up if needed

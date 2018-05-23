@@ -9,25 +9,45 @@ using System;
 using Thermo.Datapool;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Windows;
+using System.ServiceProcess;
+using System.Security.Principal;
+using System.Threading;
 
 namespace ManualRamosAddon.Model
 {
+    public struct Coeff
+    {
+        public string Name;
+        public string Value;
+    }
+
     public static class ThermoInterface
     {
-        static Timer T;
+        static System.Timers.Timer T;
+        static bool noRamos = false;
         public static ThermoArgonautViewerLibrary.Argonaut OmniView = new ThermoArgonautViewerLibrary.Argonaut();
         public static BOSCtrl Ramos;
         public static ServerItemUpdate ServerItemUpdate;
         public static Datapool.ITagInfo SwitchTag;
+        public static Datapool.ITagInfo StartTimeTag;
+        public static Datapool.ITagInfo StopTimeTag;
+        public static Datapool.ITagInfo IntervalTag;
+        public static Datapool.ITagInfo BusyTag;
         private static Dictionary<string, BlendingOptimizationSystem.Feeders> profile;
         private static BlendingOptimizationSystem.Feeders feeders = new BlendingOptimizationSystem.Feeders();
         private static BlendingOptimizationSystem.BlendRecipe recipe = new BlendingOptimizationSystem.BlendRecipe();
+        private static List<Datapool.DPGroupTagValue> tagList = new List<Datapool.DPGroupTagValue>();
+        private static List<string> tagExclude = new List<string> { "analysisid", "ProductUniqueId", "DateBegin", "DateEnd", "SubName", "IsCalibration" };
+
+        public static bool AutoSerivceRestart { get; private set; }
+
         public static void Init()
         {
-            T = new Timer
+            T = new System.Timers.Timer
             {
                 Interval = 400, // 0.4 sec   0.4*1000ms
-                Enabled = true
+                Enabled = !noRamos
             };
             T.Elapsed += new ElapsedEventHandler(onElapsedEvent);
             
@@ -42,8 +62,11 @@ namespace ManualRamosAddon.Model
             //feeders = OmniView.GetRaMOSFeederSetup();
             feeders.UpdateEvent += Feeders_UpdateEvent;
             recipe.UpdateEvent += Recipe_UpdateEvent;
+            AutoSerivceRestart = true;
+            if (AutoSerivceRestart)
+                UpdateTag(new Datapool.DPGroupTagName(@"RAMOS.Status", @"Busy", Datapool.dpTypes.BOOL), "Busy");
         }
-
+        
         private static void Recipe_UpdateEvent(BlendingOptimizationSystem.BlendRecipe e)
         {            
             if (profile != null && profile.ContainsKey(e.RecipeName))
@@ -95,16 +118,16 @@ namespace ManualRamosAddon.Model
                 // get target & tolerance for the oxide
                 var recipe = Ramos.Recipe.Items.Where((f) => f.QcName == feeder.Oxide).FirstOrDefault();
                 if (recipe == null) return;
-                double setpoint = recipe.Setpoint;
-                double tolerance = recipe.Tolerance;
-                bool basis = recipe.FirstBasis;  // true = lf    false = db
+                double setpoint = feeder.Setpoint = recipe.Setpoint;
+                double tolerance = feeder.Tolerance = recipe.Tolerance;
+                bool basis = feeder.IsLf = recipe.FirstBasis;  // true = lf    false = db
                 // get rolling average for the oxide
 
                 double rolling;
                 Datapool.DatapoolSvr.Read("Rolling.Analysis1." + (basis ? "Loss free" : "Dry basis"), feeder.Oxide, out rolling);
-                
+                feeder.Rolling = rolling;
                 // get current demand for this feeder
-                double demand = Ramos.SolveReport.Feeder[feeder.FeederNumber].Demand * 100;
+                double demand = feeder.CurrentDemand = Ramos.SolveReport.Feeder[feeder.FeederNumber].Demand * 100;
                 // compare
                 // calculate new demand
                  
@@ -175,18 +198,94 @@ namespace ManualRamosAddon.Model
                     feeders.Assign(OmniView.GetRaMOSFeederSetup());
             }
         }
-        private static void UpdateSwitchTag()                                   // Update the Type Switch datapool tag  
+        public static void UpdateTag(Datapool.DPGroupTagName tag, string dest)
         {
-            if (App.AppVM.RecipeSwitchGroup == string.Empty || App.AppVM.RecipeSwitchTag == string.Empty)
-            {
+            if (tag == null)
                 return;
+            switch (dest)
+            {
+                case "Switch":
+                    if (SwitchTag != null)
+                        SwitchTag.Dispose();
+                    SwitchTag = Datapool.DatapoolSvr.CreateTagInfo(tag.m_group, tag.m_tag, tag.m_type);
+                    SwitchTag.UpdateValueEvent += SwitchTag_UpdateValueEvent;
+                    SwitchTag_UpdateValueEvent(SwitchTag);
+                    break;
+                case "StartTime":
+                    if (StartTimeTag != null)
+                        StartTimeTag.Dispose();
+                    StartTimeTag = Datapool.DatapoolSvr.CreateTagInfo(tag.m_group, tag.m_tag, tag.m_type);
+                    StartTimeTag.UpdateValueEvent += StartTimeTag_UpdateValueEvent;
+                    StartTimeTag_UpdateValueEvent(StartTimeTag);
+                    break;
+                case "StopTime":
+                    if (StopTimeTag != null)
+                        StopTimeTag.Dispose();
+                    StopTimeTag = Datapool.DatapoolSvr.CreateTagInfo(tag.m_group, tag.m_tag, tag.m_type);
+                    StopTimeTag.UpdateValueEvent += StopTimeTag_UpdateValueEvent;
+                    StopTimeTag_UpdateValueEvent(StopTimeTag);
+                    break;
+                case "Calculate":
+                    if (IntervalTag != null)
+                        IntervalTag.Dispose();
+                    IntervalTag = Datapool.DatapoolSvr.CreateTagInfo(tag.m_group, tag.m_tag, tag.m_type);
+                    IntervalTag.UpdateValueEvent += IntervalTag_UpdateValueEvent;
+                    IntervalTag_UpdateValueEvent(IntervalTag);
+                    break;
+                case "Busy":
+                    if (BusyTag != null)
+                        BusyTag.Dispose();
+                    BusyTag = Datapool.DatapoolSvr.CreateTagInfo(tag.m_group, tag.m_tag, tag.m_type);
+                    BusyTag.UpdateValueEvent += BusyTag_UpdateValueEvent;
+                    BusyTag_UpdateValueEvent(BusyTag);
+                    break;
+                default:
+                    break;
             }
-            if (SwitchTag != null)
-                SwitchTag.Dispose();
-            SwitchTag = Datapool.DatapoolSvr.CreateTagInfo(App.AppVM.RecipeSwitchGroup, App.AppVM.RecipeSwitchTag, Datapool.dpTypes.STRING);
-            SwitchTag.UpdateValueEvent += SwitchTag_UpdateValueEvent;
-            SwitchTag_UpdateValueEvent(SwitchTag);
         }
+
+        private static void IntervalTag_UpdateValueEvent(Datapool.ITagInfo e)
+        {
+            if (IntervalTag.AsBoolean == false)
+                return;
+            DateTime start, stop;
+            start = DateTime.Now;
+            stop = DateTime.Now;
+            if (StartTimeTag != null) {
+                try
+                {
+                    start = DateTime.Parse(StartTimeTag.AsString);
+                }
+                catch
+                {
+                    start = DateTime.Now;
+                }
+            }
+            if (StopTimeTag != null)
+            {
+                try
+                {
+                    stop = DateTime.Parse(StopTimeTag.AsString);
+                }
+                catch
+                {
+                    stop = DateTime.Now;
+                }
+            }
+            CreateInterval(start, stop);
+            IntervalTag.Write(false);
+        }
+
+        private static void StopTimeTag_UpdateValueEvent(Datapool.ITagInfo e)
+        {
+            /* Do nothing */
+        }
+
+        private static void StartTimeTag_UpdateValueEvent(Datapool.ITagInfo e)
+        {
+            /* Do nothing */
+        }
+
         private static void SolveReport_UpdateEvent(BlendControl.SolveReport e)  // Runs after Ramos Solve  
         {
             App.AppVM.SolveCount++;
@@ -213,7 +312,19 @@ namespace ManualRamosAddon.Model
             {
                 App.AppVM.ErrorCode = "Recipe in switch tag not valid. No change to current recipe.";
             }
-        } 
+        }
+
+        private static void BusyTag_UpdateValueEvent(Datapool.ITagInfo e)
+        {
+            if (BusyTag.AsBoolean)
+            {
+                Thread.Sleep(5000);
+                bool tempRead;
+                Datapool.DatapoolSvr.Read("RAMOS.Status", "Busy", out tempRead);
+                if (tempRead && (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator))
+                    RebootService("ThermoScientificOmniViewService");
+            }
+        }
 
         public static void InitSources(ObservableCollection<SourceData> sources)
         {
@@ -238,19 +349,27 @@ namespace ManualRamosAddon.Model
             App.AppVM.Kp = Properties.Settings.Default.Kp;
             App.AppVM.Ki = Properties.Settings.Default.Ki;
             App.AppVM.Kd = Properties.Settings.Default.Kd;
-            App.AppVM.RecipeSwitchGroup = Properties.Settings.Default.RecipeGroup;
-            App.AppVM.RecipeSwitchTag = Properties.Settings.Default.RecipeTag;
-            UpdateSwitchTag();
+            App.AppVM.SwitchTag = JsonConvert.DeserializeObject<Datapool.DPGroupTagName>(Properties.Settings.Default.SwitchTag);
+            App.AppVM.StartTimeTag = JsonConvert.DeserializeObject<Datapool.DPGroupTagName>(Properties.Settings.Default.StartTimeTag);
+            App.AppVM.StopTimeTag = JsonConvert.DeserializeObject<Datapool.DPGroupTagName>(Properties.Settings.Default.StopTimeTag);
+            App.AppVM.CalculateTag = JsonConvert.DeserializeObject<Datapool.DPGroupTagName>(Properties.Settings.Default.CalculateTag);
             profile = JsonConvert.DeserializeObject<Dictionary<string, BlendingOptimizationSystem.Feeders>>(Properties.Settings.Default.FeederDictionary);
             if (profile != null)
             {
-                recipe = OmniView.GetRaMOSRecipe();
-                if (profile.ContainsKey(recipe.RecipeName))
+                try
                 {
-                    OmniView.SetRaMOSFeederSetup(profile[recipe.RecipeName]);   // if feeder profile exists, set it in OmniView.
+                    recipe = OmniView.GetRaMOSRecipe();
+                    if (profile.ContainsKey(recipe.RecipeName))
+                    {
+                        OmniView.SetRaMOSFeederSetup(profile[recipe.RecipeName]);   // if feeder profile exists, set it in OmniView.
+                    }
+                    else
+                        profile.Add(recipe.RecipeName, OmniView.GetRaMOSFeederSetup());
                 }
-                else
-                    profile.Add(recipe.RecipeName, OmniView.GetRaMOSFeederSetup());
+                catch
+                {
+                    noRamos = true;
+                }
             }
 
             if (App.AppVM.NumFeeders < 1)
@@ -277,8 +396,10 @@ namespace ManualRamosAddon.Model
             Properties.Settings.Default.Kp = App.AppVM.Kp;
             Properties.Settings.Default.Ki = App.AppVM.Ki;
             Properties.Settings.Default.Kd = App.AppVM.Kd;
-            Properties.Settings.Default.RecipeGroup = App.AppVM.RecipeSwitchGroup;
-            Properties.Settings.Default.RecipeTag = App.AppVM.RecipeSwitchTag;
+            Properties.Settings.Default.SwitchTag = JsonConvert.SerializeObject(App.AppVM.SwitchTag);
+            Properties.Settings.Default.StartTimeTag = JsonConvert.SerializeObject(App.AppVM.StartTimeTag);
+            Properties.Settings.Default.StopTimeTag = JsonConvert.SerializeObject(App.AppVM.StopTimeTag);
+            Properties.Settings.Default.CalculateTag = JsonConvert.SerializeObject(App.AppVM.CalculateTag);
             Properties.Settings.Default.FeederDictionary = JsonConvert.SerializeObject(profile);
             App.AppVM.NumFeeders = Properties.Settings.Default.NumFeeders = App.AppVM.Feeders.Count;
             if (App.AppVM.NumFeeders < 1)
@@ -313,17 +434,110 @@ namespace ManualRamosAddon.Model
             return;
             
         }
+
         public static void CloseAppAsync()
         {
-            
+            SaveConfig();
+            feeders.UpdateEvent -= Feeders_UpdateEvent;
             if (SwitchTag != null)
             {
-                SaveConfig();
-                feeders.UpdateEvent -= Feeders_UpdateEvent;
                 SwitchTag.UpdateValueEvent -= SwitchTag_UpdateValueEvent;
-                SwitchTag.Dispose();
-                Datapool.DatapoolSvr.Dispose();
-            }            
+                SwitchTag.Dispose();                
+            }
+            if (StartTimeTag != null)
+            {
+                StartTimeTag.UpdateValueEvent -= StartTimeTag_UpdateValueEvent;
+                StartTimeTag.Dispose();
+            }
+            if (StopTimeTag != null)
+            {
+                StopTimeTag.UpdateValueEvent -= StopTimeTag_UpdateValueEvent;
+                StopTimeTag.Dispose();
+            }
+            if (IntervalTag != null)
+            {
+                IntervalTag.UpdateValueEvent -= IntervalTag_UpdateValueEvent;
+                IntervalTag.Dispose();
+            }
+            if (BusyTag != null)
+            {
+                BusyTag.UpdateValueEvent -= BusyTag_UpdateValueEvent;
+                BusyTag.Dispose();
+            }
+            Datapool.DatapoolSvr.Dispose();
+        }
+        public static void CreateInterval(DateTime startTime, DateTime stopTime, string dpGroup = "AutoInterval")
+        {
+            var a = OmniView.GetAnalysisListAverage(startTime, stopTime);
+            a.WriteAnalysisToDatapool(dpGroup);
+        }
+
+        private static void StopService(string serviceName)
+        {
+            ServiceController sc = new ServiceController();
+            sc.ServiceName = serviceName;
+
+            if (sc.Status == ServiceControllerStatus.Running)
+            {
+                try
+                {
+                    TimeSpan timeout = TimeSpan.FromMilliseconds(20000);
+                    sc.Stop();
+                    sc.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
+
+                }
+                catch(InvalidOperationException)
+                {
+                    MessageBox.Show("Service Timeout Reached.  Manually Restart OmniView Service.");
+                }
+            }
+        }
+
+        private static void StartService(string serviceName)
+        {
+            ServiceController sc = new ServiceController();
+            sc.ServiceName = serviceName;
+            if (sc.Status == ServiceControllerStatus.Stopped)
+            {
+                try
+                {
+                    sc.Start();
+                    sc.WaitForStatus(ServiceControllerStatus.Running);
+                }
+                catch (InvalidOperationException)
+                {
+                    MessageBox.Show("Could not start OmniView Service.  Try starting manually.");
+                }
+            }
+        }
+
+        private static bool ServiceIsRunning(string serviceName)
+        {
+            ServiceController sc = new ServiceController();
+            sc.ServiceName = serviceName;
+            if (sc.Status == ServiceControllerStatus.Running)            
+                return true;            
+            else
+                return false;
+        }
+
+        private static bool ServiceExists(string serviceName)
+        {
+            return ServiceController.GetServices().Any(s => s.ServiceName.Equals(serviceName));
+        }
+
+        public static void RebootService(string serviceName)
+        {
+            if (ServiceExists(serviceName))
+            {
+                if (ServiceIsRunning(serviceName))
+                {
+                    StopService(serviceName);
+                    StartService(serviceName);
+                }             
+                else
+                    StartService(serviceName);
+            }
         }
     }
 }

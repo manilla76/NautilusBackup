@@ -11,10 +11,8 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
 using ManualRamosAddon.Model;
-using System.Windows;
-using System;
+using CommonServiceLocator;
 
 namespace ManualRamosAddon.ViewModel
 {
@@ -39,7 +37,15 @@ namespace ManualRamosAddon.ViewModel
             "CA1822:MarkMembersAsStatic",
             Justification = "This non-static member is needed for data binding purposes.")]
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
-          
+
+        /// <summary>
+        /// Gets the AddDpDialog property.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1822:MarkMembersAsStatic",
+            Justification = "This non-static member is needed for data binding purposes.")]
+        public AddDpDialogViewModel AddDpDialog => ServiceLocator.Current.GetInstance<AddDpDialogViewModel>();
+
         /// <summary>
         /// Gets the Feeder property.
         /// </summary>
@@ -65,6 +71,14 @@ namespace ManualRamosAddon.ViewModel
         public AddFeederViewModel AddFeederVM => ServiceLocator.Current.GetInstance<AddFeederViewModel>();
 
         /// <summary>
+        /// Gets the AddFeederVM property.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1822:MarkMembersAsStatic",
+            Justification = "This non-static member is needed for data binding purposes.")]
+        public AutoIntervalViewModel AutoIntervalVM => ServiceLocator.Current.GetInstance<AutoIntervalViewModel>();
+
+        /// <summary>
         /// Cleans up all the resources.
         /// </summary>
         public static void Cleanup()
@@ -87,6 +101,8 @@ namespace ManualRamosAddon.ViewModel
             SimpleIoc.Default.Register<FeederViewModel>();
             SimpleIoc.Default.Register<ApplicationViewModel>(true);
             SimpleIoc.Default.Register<AddFeederViewModel>();
+            SimpleIoc.Default.Register<AutoIntervalViewModel>();
+            SimpleIoc.Default.Register<AddDpDialogViewModel>();            
         }
     }
 }

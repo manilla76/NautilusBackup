@@ -1,0 +1,41 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OmniLaunch"
+        xmlns:ThermoWpfWidgets="clr-namespace:ThermoWpfWidgets;assembly=ThermoWpfWidgets"
+        xmlns:ValueConverters="clr-namespace:OmniLaunch.ValueConverters" x:Class="OmniLaunch.MainWindow"
+        mc:Ignorable="d"
+        Title="OmniLaunch" Height="Auto" Width="Auto">
+    <Window.Resources>
+        <ValueConverters:FilePathToFileName x:Key="FilePathToFileName"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="100"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.Column="0" 
+                  ItemsSource="{Binding StartList}" 
+                  AllowDrop="True"
+                  Drop="StartList_Drop"   
+                  SelectionMode="Multiple"
+                  KeyDown="StartList_KeyDown"
+                  />
+        <ListView Grid.Column="1" 
+                  ItemsSource="{Binding AppList, Converter={StaticResource FilePathToFileName}, Mode=OneWay}" 
+                  SelectedItem="{Binding SelectedItem}"
+                  MouseMove="AppList_MouseMove"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+            <Button Content="Save"/>
+            <Button Content="Run"/>
+            <Button Content="Exit"/>
+        </StackPanel>
+    </Grid>
+</Window>

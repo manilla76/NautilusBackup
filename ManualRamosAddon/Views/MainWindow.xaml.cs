@@ -22,8 +22,26 @@ namespace ManualRamosAddon
 
         private void ShowDialogReceived(NotificationMessage msg)
         {
-            var dialog = new AddFeeder();
-            dialog.ShowDialog();
+            
+            if (msg.Notification == "AddFeeder")
+            {
+                var dialog = new AddFeeder();
+                dialog.ShowDialog();
+            }
+                
+            if (msg.Notification == "AddInterval")
+            {
+                var dialog = new AutoInterval();
+                dialog.ShowDialog();
+            }
+                
+            if (msg.Notification.Contains("AddDp"))
+            {
+                var dialog = new AddDpDialog();
+                Messenger.Default.Send(new NotificationMessage(msg.Notification.Substring(0, msg.Notification.IndexOf(' '))));
+                dialog.ShowDialog();
+            }
+                
         }
     }
 }

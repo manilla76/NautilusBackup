@@ -230,24 +230,24 @@ namespace ManualRamosAddon.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string RecipeGroup {
+        public string SwitchTag {
             get {
-                return ((string)(this["RecipeGroup"]));
+                return ((string)(this["SwitchTag"]));
             }
             set {
-                this["RecipeGroup"] = value;
+                this["SwitchTag"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string RecipeTag {
+        public string StopTimeTag {
             get {
-                return ((string)(this["RecipeTag"]));
+                return ((string)(this["StopTimeTag"]));
             }
             set {
-                this["RecipeTag"] = value;
+                this["StopTimeTag"] = value;
             }
         }
         
@@ -260,6 +260,30 @@ namespace ManualRamosAddon.Properties {
             }
             set {
                 this["FeederDictionary"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string StartTimeTag {
+            get {
+                return ((string)(this["StartTimeTag"]));
+            }
+            set {
+                this["StartTimeTag"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CalculateTag {
+            get {
+                return ((string)(this["CalculateTag"]));
+            }
+            set {
+                this["CalculateTag"] = value;
             }
         }
     }

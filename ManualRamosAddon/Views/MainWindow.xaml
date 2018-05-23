@@ -5,6 +5,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ignore="http://www.galasoft.ch/ignore"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
         xmlns:thermowpfwidgets="clr-namespace:ThermoWpfWidgets;assembly=ThermoWpfWidgets"
         xmlns:vc="clr-namespace:ManualRamosAddon.ValueConverters"
         mc:Ignorable="d ignore"
@@ -19,10 +21,10 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <vc:DatapoolTagToString x:Key="DatapoolTagToString"/>
             <vc:BooleanToBulbStatus x:Key="BooleanToBulbStatusConverter"/>
         </ResourceDictionary>
     </Window.Resources>
-
     <Grid x:Name="LayoutRoot">
         <ListView ItemsSource="{Binding Feeders, Mode=OneWay}" VerticalAlignment="Top">
             <ListView.ItemsPanel>
@@ -52,9 +54,11 @@
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
                    TextWrapping="Wrap" />
+        
         <Button Content="Add A Feeder" Command="{Binding Main.OpenCommand, Mode=OneWay}" Height="30" Width="80" 
                     HorizontalAlignment="Left" Margin="10,0,0,0"
                     CommandParameter="{Binding ElementName=MainWindow1}" DataContext="{Binding Source={StaticResource Locator}}"/>
+
         <StackPanel VerticalAlignment="Bottom" Margin="2">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Kp"/>
@@ -74,17 +78,53 @@
             </StackPanel>
             <TextBlock Text="{Binding SolveCount, StringFormat=SolveCount\= \{0\}}"/>
             <Expander Header="Automatic Recipe Switch">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="DpGroup"/>
-                        <TextBox Text="{Binding RecipeSwitchGroup}" Width="100"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="DpTag"/>
-                        <TextBox Text="{Binding RecipeSwitchTag}" Width="100"/>
-                    </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Switch Tag"/>
+                    <TextBox x:Name="Switch" Text="{Binding SwitchTag, Converter={StaticResource DatapoolTagToString}}" MinWidth="100" Margin="10,0,2,0">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <cmd:EventToCommand Command="{Binding MouseDoubleClickCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
                 </StackPanel>
             </Expander>
+            <Expander Header="Automatic Interval">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="2">
+                        <TextBlock Text="Start Time"/>
+                        <TextBox x:Name="Start" Text="{Binding StartTimeTag, Converter={StaticResource DatapoolTagToString}}" MinWidth="100" Margin="10,0,2,0">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <cmd:EventToCommand Command="{Binding MouseDoubleClickCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="2">
+                        <TextBlock Text="Stop Time"/>
+                        <TextBox x:Name="Stop" Text="{Binding StopTimeTag, Converter={StaticResource DatapoolTagToString}}" MinWidth="100" Margin="10,0,2,0">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <cmd:EventToCommand Command="{Binding MouseDoubleClickCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <TextBlock Text="(leave blank for cumulative)" FontStyle="Italic"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="2">
+                        <TextBlock Text="Calculate Tag"/>
+                        <TextBox x:Name="Calculate" Text="{Binding CalculateTag, Converter={StaticResource DatapoolTagToString}}" MinWidth="100" Margin="10,0,2,0">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <cmd:EventToCommand Command="{Binding MouseDoubleClickCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>            
         </StackPanel>
+        
     </Grid>
 </Window>

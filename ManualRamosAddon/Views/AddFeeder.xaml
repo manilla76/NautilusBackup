@@ -9,8 +9,16 @@
         Title="Edit Feeder Properties"
         Icon="/ManualRamosAddon;component/Icons/ManualRamosIcon.ico"
         DataContext="{Binding AddFeederVM, Source={StaticResource Locator}}">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
 
-    <Grid DataContext="{Binding AppVM.NewFeeder, Source={StaticResource Locator}}">
+    <Grid Margin="5" DataContext="{Binding AppVM.NewFeeder, Source={StaticResource Locator}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        
         <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Width="100" Text="Feeder Number: "/>
@@ -30,6 +38,19 @@
                 <TextBox Width="50" Text="{Binding FeederAggression}"/>
             </StackPanel>
         </StackPanel>
-        
+
+        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+            <CheckBox IsChecked="{Binding Debug}" Content="Show Debug Info"/>
+            <StackPanel Visibility="{Binding Debug, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Text="{Binding Setpoint, StringFormat=Setpoint: \{0:F\}}" ToolTip="Setpoint from Ramos"/>
+                <TextBlock Text="{Binding IsLf, StringFormat=Is Loss Free: \{0\}}" ToolTip="True = LF; False = DB"/>
+                <TextBlock Text="{Binding Rolling, StringFormat=Rolling: \{0:F\}}" ToolTip="Rolling Avergage for the Oxide targeted."/>
+                <TextBlock Text="{Binding Tolerance, StringFormat=Tolerance: \{0:F\}}" ToolTip="Tolerance from Ramos"/>
+                <TextBlock Text="{Binding Error, StringFormat=Error: \{0:F\}}" ToolTip="Difference from Rolling to Setpoint +/- Tolerance"/>
+                <TextBlock Text="{Binding ErrorSum, StringFormat=ErrorSum: \{0:F\}}" ToolTip="Sum of error over time"/>
+                <TextBlock Text="{Binding CurrentDemand, StringFormat=CurrentDamand: \{0:F\}}" ToolTip="Current Feeder Setpoint"/>
+                <TextBlock Text="{Binding PrevError, StringFormat=PreviousError: \{0:F\}}" ToolTip="Error the solve prior"/>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>
