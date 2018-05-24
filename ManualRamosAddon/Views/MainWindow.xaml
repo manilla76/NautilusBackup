@@ -23,6 +23,7 @@
             </ResourceDictionary.MergedDictionaries>
             <vc:DatapoolTagToString x:Key="DatapoolTagToString"/>
             <vc:BooleanToBulbStatus x:Key="BooleanToBulbStatusConverter"/>
+            <vc:SourceToFeederNumberAndSourceName x:Key="SourceToFeederNumberAndSourceName"/>
         </ResourceDictionary>
     </Window.Resources>
     <Grid x:Name="LayoutRoot">
@@ -41,7 +42,16 @@
                             <thermowpfwidgets:BulbWidget Height="20" Width="20" CurrentStatus="{Binding IsManual, Converter={StaticResource BooleanToBulbStatusConverter}}" HorizontalAlignment="Center"/>
                             <TextBlock Text="{Binding MaxDelta, StringFormat=Max&#x0394;: \{0\}}" HorizontalAlignment="Center"/>
                             <!--<TextBlock Text="{Binding SourceEstimateName}" HorizontalAlignment="Center"/>-->
-                            <ComboBox ItemsSource="{Binding Sources}" SelectedIndex="{Binding FeederNumber}" DisplayMemberPath="SourceEstimateName"/>
+                            <ComboBox ItemsSource="{Binding Sources}" SelectedIndex="{Binding FeederNumber}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding FeederNumber, Converter={StaticResource SourceToFeederNumberAndSourceName}}"/>
+                                            <TextBlock Text="{Binding SourceEstimateName}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </StackPanel>
                     </Button>
                 </DataTemplate>

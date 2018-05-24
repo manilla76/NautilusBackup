@@ -37,8 +37,8 @@ namespace ManualRamosAddon.Model
         private static Dictionary<string, BlendingOptimizationSystem.Feeders> profile;
         private static BlendingOptimizationSystem.Feeders feeders = new BlendingOptimizationSystem.Feeders();
         private static BlendingOptimizationSystem.BlendRecipe recipe = new BlendingOptimizationSystem.BlendRecipe();
-        private static List<Datapool.DPGroupTagValue> tagList = new List<Datapool.DPGroupTagValue>();
-        private static List<string> tagExclude = new List<string> { "analysisid", "ProductUniqueId", "DateBegin", "DateEnd", "SubName", "IsCalibration" };
+        private static readonly List<Datapool.DPGroupTagValue> tagList = new List<Datapool.DPGroupTagValue>();
+        private static readonly List<string> tagExclude = new List<string> { "analysisid", "ProductUniqueId", "DateBegin", "DateEnd", "SubName", "IsCalibration" };
 
         public static bool AutoSerivceRestart { get; private set; }
 
@@ -49,12 +49,12 @@ namespace ManualRamosAddon.Model
                 Interval = 400, // 0.4 sec   0.4*1000ms
                 Enabled = !noRamos
             };
-            T.Elapsed += new ElapsedEventHandler(onElapsedEvent);
+            T.Elapsed += new ElapsedEventHandler(OnElapsedEvent);
             
             Ramos = new BOSCtrl(null);
             Ramos.SolveReport.UpdateEvent += SolveReport_UpdateEvent;
             profile = profile ?? new Dictionary<string, BlendingOptimizationSystem.Feeders>();
-            //var feeders = OmniView.GetRaMOSFeederSetup();
+            var feeders = OmniView.GetRaMOSFeederSetup();
             //Ramos.Feeders.UpdateEvent += Feeders_UpdateEvent;
             ServerItemUpdate = new ServerItemUpdate();
             ServerItemUpdate.IsUpdated(ServerItemUpdate.ItemsEnum.UpdateProduct, OmniView.GetItemUpdate());
@@ -115,16 +115,17 @@ namespace ManualRamosAddon.Model
             {
                 if (feeder.IsManual != true)  // if disabled, skip
                     continue;
-                // get target & tolerance for the oxide
-                var recipe = Ramos.Recipe.Items.Where((f) => f.QcName == feeder.Oxide).FirstOrDefault();
-                if (recipe == null) return;
-                double setpoint = feeder.Setpoint = recipe.Setpoint;
-                double tolerance = feeder.Tolerance = recipe.Tolerance;
-                bool basis = feeder.IsLf = recipe.FirstBasis;  // true = lf    false = db
+                // get target & tolerance for the oxide for the current recipe
+                recipe = OmniView.GetRaMOSRecipe();
+                var curRecipe = recipe.Items.Where((r) => r.QcName == feeder.Oxide).FirstOrDefault();
+                //recipe = Ramos.Recipe.Items.Where((f) => f.QcName == feeder.Oxide).FirstOrDefault();
+                if (curRecipe == null) return;
+                double setpoint = feeder.Setpoint = curRecipe.Setpoint;
+                double tolerance = feeder.Tolerance = curRecipe.Tolerance;
+                bool basis = feeder.IsLf = curRecipe.FirstBasis;  // true = lf    false = db
                 // get rolling average for the oxide
 
-                double rolling;
-                Datapool.DatapoolSvr.Read("Rolling.Analysis1." + (basis ? "Loss free" : "Dry basis"), feeder.Oxide, out rolling);
+                Datapool.DatapoolSvr.Read("Rolling.Analysis1." + (basis ? "Loss free" : "Dry basis"), feeder.Oxide, out double rolling);
                 feeder.Rolling = rolling;
                 // get current demand for this feeder
                 double demand = feeder.CurrentDemand = Ramos.SolveReport.Feeder[feeder.FeederNumber].Demand * 100;
@@ -159,7 +160,7 @@ namespace ManualRamosAddon.Model
                 Datapool.DatapoolSvr.Write("RAMOS.Feeder.Read", "Set fixed rate% #" + (feeder.FeederNumber+1).ToString(), demand);
             }
         }
-        private static void onElapsedEvent(object sender, ElapsedEventArgs e)  // Runs every T (timer) seconds.  See Init() for T value.
+        private static void OnElapsedEvent(object sender, ElapsedEventArgs e)  // Runs every T (timer) seconds.  See Init() for T value.
         {
             var results = OmniView.GetRaMOSFeederSetup();
             if (results == null) return;
@@ -319,8 +320,7 @@ namespace ManualRamosAddon.Model
             if (BusyTag.AsBoolean)
             {
                 Thread.Sleep(5000);
-                bool tempRead;
-                Datapool.DatapoolSvr.Read("RAMOS.Status", "Busy", out tempRead);
+                Datapool.DatapoolSvr.Read("RAMOS.Status", "Busy", out bool tempRead);
                 if (tempRead && (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator))
                     RebootService("ThermoScientificOmniViewService");
             }
@@ -474,8 +474,7 @@ namespace ManualRamosAddon.Model
 
         private static void StopService(string serviceName)
         {
-            ServiceController sc = new ServiceController();
-            sc.ServiceName = serviceName;
+            ServiceController sc = new ServiceController() { ServiceName = serviceName };
 
             if (sc.Status == ServiceControllerStatus.Running)
             {
@@ -495,8 +494,7 @@ namespace ManualRamosAddon.Model
 
         private static void StartService(string serviceName)
         {
-            ServiceController sc = new ServiceController();
-            sc.ServiceName = serviceName;
+            ServiceController sc = new ServiceController() { ServiceName = serviceName };
             if (sc.Status == ServiceControllerStatus.Stopped)
             {
                 try
@@ -513,8 +511,7 @@ namespace ManualRamosAddon.Model
 
         private static bool ServiceIsRunning(string serviceName)
         {
-            ServiceController sc = new ServiceController();
-            sc.ServiceName = serviceName;
+            ServiceController sc = new ServiceController() { ServiceName = serviceName };
             if (sc.Status == ServiceControllerStatus.Running)            
                 return true;            
             else
