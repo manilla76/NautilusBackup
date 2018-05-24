@@ -54,7 +54,10 @@ namespace ManualRamosAddon.Model
             Ramos = new BOSCtrl(null);
             Ramos.SolveReport.UpdateEvent += SolveReport_UpdateEvent;
             profile = profile ?? new Dictionary<string, BlendingOptimizationSystem.Feeders>();
-            var feeders = OmniView.GetRaMOSFeederSetup();
+            try
+            {
+                var feeders = OmniView.GetRaMOSFeederSetup();
+      
             //Ramos.Feeders.UpdateEvent += Feeders_UpdateEvent;
             ServerItemUpdate = new ServerItemUpdate();
             ServerItemUpdate.IsUpdated(ServerItemUpdate.ItemsEnum.UpdateProduct, OmniView.GetItemUpdate());
@@ -65,6 +68,11 @@ namespace ManualRamosAddon.Model
             AutoSerivceRestart = true;
             if (AutoSerivceRestart)
                 UpdateTag(new Datapool.DPGroupTagName(@"RAMOS.Status", @"Busy", Datapool.dpTypes.BOOL), "Busy");
+            }
+            catch
+            {
+
+            }
         }
         
         private static void Recipe_UpdateEvent(BlendingOptimizationSystem.BlendRecipe e)
