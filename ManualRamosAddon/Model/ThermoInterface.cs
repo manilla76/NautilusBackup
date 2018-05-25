@@ -40,7 +40,7 @@ namespace ManualRamosAddon.Model
         private static readonly List<Datapool.DPGroupTagValue> tagList = new List<Datapool.DPGroupTagValue>();
         private static readonly List<string> tagExclude = new List<string> { "analysisid", "ProductUniqueId", "DateBegin", "DateEnd", "SubName", "IsCalibration" };
 
-        public static bool AutoSerivceRestart { get; private set; }
+        public static bool AutoSerivceRestart { get => new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator); }
 
         public static void Init()
         {
@@ -57,22 +57,24 @@ namespace ManualRamosAddon.Model
             try
             {
                 var feeders = OmniView.GetRaMOSFeederSetup();
-      
-            //Ramos.Feeders.UpdateEvent += Feeders_UpdateEvent;
-            ServerItemUpdate = new ServerItemUpdate();
-            ServerItemUpdate.IsUpdated(ServerItemUpdate.ItemsEnum.UpdateProduct, OmniView.GetItemUpdate());
-            
-            //feeders = OmniView.GetRaMOSFeederSetup();
-            feeders.UpdateEvent += Feeders_UpdateEvent;
-            recipe.UpdateEvent += Recipe_UpdateEvent;
-            AutoSerivceRestart = true;
-            if (AutoSerivceRestart)
-                UpdateTag(new Datapool.DPGroupTagName(@"RAMOS.Status", @"Busy", Datapool.dpTypes.BOOL), "Busy");
+
+                //Ramos.Feeders.UpdateEvent += Feeders_UpdateEvent;
+                ServerItemUpdate = new ServerItemUpdate();
+                ServerItemUpdate.IsUpdated(ServerItemUpdate.ItemsEnum.UpdateProduct, OmniView.GetItemUpdate());
+
+                //feeders = OmniView.GetRaMOSFeederSetup();
+                feeders.UpdateEvent += Feeders_UpdateEvent;
+                recipe.UpdateEvent += Recipe_UpdateEvent;
             }
             catch
             {
 
             }
+
+            if (AutoSerivceRestart)
+                UpdateTag(new Datapool.DPGroupTagName(@"RAMOS.Status", @"Busy", Datapool.dpTypes.BOOL), "Busy");
+            
+         
         }
         
         private static void Recipe_UpdateEvent(BlendingOptimizationSystem.BlendRecipe e)
