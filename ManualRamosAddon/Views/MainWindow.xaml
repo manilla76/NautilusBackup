@@ -24,6 +24,7 @@
             <vc:DatapoolTagToString x:Key="DatapoolTagToString"/>
             <vc:BooleanToBulbStatus x:Key="BooleanToBulbStatusConverter"/>
             <vc:SourceToFeederNumberAndSourceName x:Key="SourceToFeederNumberAndSourceName"/>
+            <vc:BooleanToBackgroundBrushConverter x:Key="BooleanToBackgroundBrush"/>
         </ResourceDictionary>
     </Window.Resources>
     <Grid x:Name="LayoutRoot">
@@ -35,7 +36,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>                
                 <DataTemplate>
-                    <Button Command="{Binding OpenCommand, Mode=OneWay}" Background="Transparent">
+                    <Button Command="{Binding OpenCommand, Mode=OneWay}" Background="{Binding IsPlugged, Converter={StaticResource BooleanToBackgroundBrush}}">
                         <StackPanel HorizontalAlignment="Center">
                             <Button Width="10" Height="10" Content="x" Background="red" Foreground="White" HorizontalAlignment="Right" ToolTip="Delete" Command="{Binding DeleteCommand}"/>
                             <TextBlock Text="{Binding Oxide}" HorizontalAlignment="Center"/>

@@ -125,6 +125,8 @@ namespace ManualRamosAddon.Model
                     continue;
                 // get target & tolerance for the oxide for the current recipe
                 recipe = OmniView.GetRaMOSRecipe();
+                var feed = OmniView.GetRaMOSFeederSetup();
+                
                 var curRecipe = recipe.Items.Where((r) => r.QcName == feeder.Oxide).FirstOrDefault();
                 //recipe = Ramos.Recipe.Items.Where((f) => f.QcName == feeder.Oxide).FirstOrDefault();
                 if (curRecipe == null) return;
@@ -135,8 +137,15 @@ namespace ManualRamosAddon.Model
 
                 Datapool.DatapoolSvr.Read("Rolling.Analysis1." + (basis ? "Loss free" : "Dry basis"), feeder.Oxide, out double rolling);
                 feeder.Rolling = rolling;
+                // Check for starvation/plugged feeder
+                feeder.IsPlugged = Ramos.SolveReport.Feeder[feeder.FeederNumber].Plugged;
+                if (feeder.IsPlugged)
+                {
+                    return;
+                }
                 // get current demand for this feeder
                 double demand = feeder.CurrentDemand = Ramos.SolveReport.Feeder[feeder.FeederNumber].Demand * 100;
+                
                 // compare
                 // calculate new demand
                  

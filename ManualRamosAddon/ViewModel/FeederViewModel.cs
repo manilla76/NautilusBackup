@@ -31,6 +31,7 @@ namespace ManualRamosAddon
         private double error;
         private double prevError;
         private double errorSum;
+        private bool isPlugged;
 
         public string Oxide { get => oxide; set => Set(ref oxide, value); }
         public string SourceEstmiateName { get => Sources[FeederNumber].SourceEstimateName; }
@@ -49,6 +50,7 @@ namespace ManualRamosAddon
         public double Tolerance { get => tolerance; set => Set(ref tolerance, value); }
         public double Setpoint { get => setpoint; set => Set(ref setpoint, value); }
         public double Rolling { get => rolling; set => Set(ref rolling, value); }
+        public bool IsPlugged { get => isPlugged; set => Set(ref isPlugged, value); }
 
         /// <summary>
         /// Initializes a new instance of the FeederViewModel class.

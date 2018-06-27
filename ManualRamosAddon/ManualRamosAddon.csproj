@@ -132,6 +132,7 @@
     <Compile Include="Model\IDataService.cs" />
     <Compile Include="Model\SourceData.cs" />
     <Compile Include="Model\ThermoInterface.cs" />
+    <Compile Include="ValueConverters\BooleanToBackgroundBrushConverter.cs" />
     <Compile Include="ValueConverters\BooleanToBulbStatus.cs" />
     <Compile Include="ValueConverters\DatapoolTagToString.cs" />
     <Compile Include="ValueConverters\SourceToFeederNumberAndSourceName.cs" />

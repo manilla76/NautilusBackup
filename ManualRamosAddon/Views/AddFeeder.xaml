@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ignore="http://www.galasoft.ch/ignore"
-        xmlns:vc="clr-namespace:ManualRamosAddon.ValueConverters" 
+        xmlns:vc="clr-namespace:ManualRamosAddon.ValueConverters"
        
         mc:Ignorable="d ignore"
         Height="400" Width="800"
@@ -65,6 +65,7 @@
                 <TextBlock Text="{Binding ErrorSum, StringFormat=ErrorSum: \{0:F\}}" ToolTip="Sum of error over time"/>
                 <TextBlock Text="{Binding CurrentDemand, StringFormat=CurrentDamand: \{0:F\}}" ToolTip="Current Feeder Setpoint"/>
                 <TextBlock Text="{Binding PrevError, StringFormat=PreviousError: \{0:F\}}" ToolTip="Error the solve prior"/>
+                <TextBlock Text="{Binding IsPlugged, StringFormat=FeederIsPlugged: \{0\}}" ToolTip="Feeder Actual Meets Demand"/>
             </StackPanel>
         </StackPanel>
     </Grid>
