@@ -43,7 +43,7 @@ namespace ManualRamosAddon.Model
         public static bool AutoSerivceRestart { get => new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator); }
 
         public static void Init()
-        {
+        {            
             T = new System.Timers.Timer
             {
                 Interval = 400, // 0.4 sec   0.4*1000ms
@@ -127,6 +127,8 @@ namespace ManualRamosAddon.Model
                     continue;
                 // get target & tolerance for the oxide for the current recipe
                 recipe = OmniView.GetRaMOSRecipe();
+                var feederInfo = OmniView.GetRaMOSFeederSetup();
+
                 var curRecipe = recipe.Items.Where((r) => r.QcName == feeder.Oxide).FirstOrDefault();
                 //recipe = Ramos.Recipe.Items.Where((f) => f.QcName == feeder.Oxide).FirstOrDefault();
                 if (curRecipe == null) return;
@@ -162,7 +164,8 @@ namespace ManualRamosAddon.Model
                 demandOffset += feeder.ErrorSum * App.AppVM.Ki; // i term
                 demandOffset = (demandOffset < -(feeder.MaxDelta)) ? -feeder.MaxDelta : (demandOffset > feeder.MaxDelta) ? feeder.MaxDelta : demandOffset;  // restrict to Max Delta
                 demand += demandOffset;
-                demand = (demand < 0) ? 0 : (demand > 100) ? 100 : demand;
+                demand = (demand < feederInfo[feeder.FeederNumber].MinimumRate * 100) ? feederInfo[feeder.FeederNumber].MinimumRate * 100 : (demand > feederInfo[feeder.FeederNumber].MaximumRate * 100) ? feederInfo[feeder.FeederNumber].MaximumRate * 100 : demand;  // restrict values to between min rate and max rate
+                demand = (demand < 0) ? 0 : (demand > 100) ? 100 : demand; // If demand < 0, set to 0.  If demand > 100, set to 100
                 feeder.PrevError = feeder.Error;  // update previous error
                 //double offset = diff * feeder.FeederAggression / 1000;
                 //demand += (offset >= 0) ? ((offset > feeder.MaxDelta) ? feeder.MaxDelta : offset) : ((offset < -(feeder.MaxDelta)) ? -(feeder.MaxDelta) : offset);
