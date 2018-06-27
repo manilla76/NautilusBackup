@@ -40,10 +40,10 @@ namespace ManualRamosAddon.Model
         private static readonly List<Datapool.DPGroupTagValue> tagList = new List<Datapool.DPGroupTagValue>();
         private static readonly List<string> tagExclude = new List<string> { "analysisid", "ProductUniqueId", "DateBegin", "DateEnd", "SubName", "IsCalibration" };
 
-        public static bool AutoSerivceRestart { get; private set; }
+        public static bool AutoSerivceRestart { get => new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator); }
 
         public static void Init()
-        {
+        {            
             T = new System.Timers.Timer
             {
                 Interval = 400, // 0.4 sec   0.4*1000ms
@@ -57,22 +57,24 @@ namespace ManualRamosAddon.Model
             try
             {
                 var feeders = OmniView.GetRaMOSFeederSetup();
-      
-            //Ramos.Feeders.UpdateEvent += Feeders_UpdateEvent;
-            ServerItemUpdate = new ServerItemUpdate();
-            ServerItemUpdate.IsUpdated(ServerItemUpdate.ItemsEnum.UpdateProduct, OmniView.GetItemUpdate());
-            
-            //feeders = OmniView.GetRaMOSFeederSetup();
-            feeders.UpdateEvent += Feeders_UpdateEvent;
-            recipe.UpdateEvent += Recipe_UpdateEvent;
-            AutoSerivceRestart = true;
-            if (AutoSerivceRestart)
-                UpdateTag(new Datapool.DPGroupTagName(@"RAMOS.Status", @"Busy", Datapool.dpTypes.BOOL), "Busy");
+
+                //Ramos.Feeders.UpdateEvent += Feeders_UpdateEvent;
+                ServerItemUpdate = new ServerItemUpdate();
+                ServerItemUpdate.IsUpdated(ServerItemUpdate.ItemsEnum.UpdateProduct, OmniView.GetItemUpdate());
+
+                //feeders = OmniView.GetRaMOSFeederSetup();
+                feeders.UpdateEvent += Feeders_UpdateEvent;
+                recipe.UpdateEvent += Recipe_UpdateEvent;
             }
             catch
             {
 
             }
+
+            if (AutoSerivceRestart)
+                UpdateTag(new Datapool.DPGroupTagName(@"RAMOS.Status", @"Busy", Datapool.dpTypes.BOOL), "Busy");
+            
+         
         }
         
         private static void Recipe_UpdateEvent(BlendingOptimizationSystem.BlendRecipe e)
@@ -125,8 +127,8 @@ namespace ManualRamosAddon.Model
                     continue;
                 // get target & tolerance for the oxide for the current recipe
                 recipe = OmniView.GetRaMOSRecipe();
-                var feed = OmniView.GetRaMOSFeederSetup();
-                
+                var feederInfo = OmniView.GetRaMOSFeederSetup();
+
                 var curRecipe = recipe.Items.Where((r) => r.QcName == feeder.Oxide).FirstOrDefault();
                 //recipe = Ramos.Recipe.Items.Where((f) => f.QcName == feeder.Oxide).FirstOrDefault();
                 if (curRecipe == null) return;
@@ -169,7 +171,8 @@ namespace ManualRamosAddon.Model
                 demandOffset += feeder.ErrorSum * App.AppVM.Ki; // i term
                 demandOffset = (demandOffset < -(feeder.MaxDelta)) ? -feeder.MaxDelta : (demandOffset > feeder.MaxDelta) ? feeder.MaxDelta : demandOffset;  // restrict to Max Delta
                 demand += demandOffset;
-                demand = (demand < 0) ? 0 : (demand > 100) ? 100 : demand;
+                demand = (demand < feederInfo[feeder.FeederNumber].MinimumRate * 100) ? feederInfo[feeder.FeederNumber].MinimumRate * 100 : (demand > feederInfo[feeder.FeederNumber].MaximumRate * 100) ? feederInfo[feeder.FeederNumber].MaximumRate * 100 : demand;  // restrict values to between min rate and max rate
+                demand = (demand < 0) ? 0 : (demand > 100) ? 100 : demand; // If demand < 0, set to 0.  If demand > 100, set to 100
                 feeder.PrevError = feeder.Error;  // update previous error
                 //double offset = diff * feeder.FeederAggression / 1000;
                 //demand += (offset >= 0) ? ((offset > feeder.MaxDelta) ? feeder.MaxDelta : offset) : ((offset < -(feeder.MaxDelta)) ? -(feeder.MaxDelta) : offset);

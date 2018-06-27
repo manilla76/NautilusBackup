@@ -2,7 +2,9 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
 using Thermo.Configuration;
+using BaseLibrary;
 
 namespace OmniLaunch
 {
@@ -12,6 +14,13 @@ namespace OmniLaunch
         private LauncherAppBrowserViewModel launcher = new LauncherAppBrowserViewModel();
         private ObservableCollection<string> appList;
         private ObservableCollection<string> startList;
+        private ICommand dragCommand;
+        public ICommand DragCommand => dragCommand ?? (dragCommand = new RelayCommand((p)=> 
+            {
+
+            }));
+
+        
         public ObservableCollection<string> AppList => appList;
         public ObservableCollection<string> StartList { get => startList; }
         public string SelectedItem { get; set; }

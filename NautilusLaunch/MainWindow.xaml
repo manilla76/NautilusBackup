@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OmniLaunch"
         xmlns:ThermoWpfWidgets="clr-namespace:ThermoWpfWidgets;assembly=ThermoWpfWidgets"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ValueConverters="clr-namespace:OmniLaunch.ValueConverters" x:Class="OmniLaunch.MainWindow"
         mc:Ignorable="d"
         Title="OmniLaunch" Height="Auto" Width="Auto">
     <Window.Resources>
         <ValueConverters:FilePathToFileName x:Key="FilePathToFileName"/>
+        <local:MainWindowViewModel x:Key="mwvm"/>
     </Window.Resources>
-    <Grid>
+    <Grid DataContext="{Binding Source={StaticResource mwvm}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MinWidth="100"/>
             <ColumnDefinition Width="Auto"/>
@@ -24,13 +26,16 @@
                   ItemsSource="{Binding StartList}" 
                   AllowDrop="True"
                   Drop="StartList_Drop"   
-                  SelectionMode="Multiple"
-                  KeyDown="StartList_KeyDown"
-                  />
+                  SelectionMode="Multiple">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Drop">
+                    <i:InvokeCommandAction Command="{Binding DragCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ListView>
         <ListView Grid.Column="1" 
                   ItemsSource="{Binding AppList, Converter={StaticResource FilePathToFileName}, Mode=OneWay}" 
-                  SelectedItem="{Binding SelectedItem}"
-                  MouseMove="AppList_MouseMove"/>
+                  SelectedItem="{Binding SelectedItem}"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalAlignment="Center">
             <Button Content="Save"/>
