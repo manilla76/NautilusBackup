@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Data;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace OmniLaunch.ValueConverters
 {
@@ -9,12 +11,22 @@ namespace OmniLaunch.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            ObservableCollection<string> temp = (ObservableCollection<string>)value;
-            for (int i = 0; i < temp.Count; i++)
+            IEnumerable<string> temp;
+            if (value is ObservableCollection<ProgramModel>)
             {
-                temp[i] = temp[i].Substring(temp[i].LastIndexOf(@"Thermo\Nautilus\") + 16);
-            }            
+                temp = ((ObservableCollection<ProgramModel>)value).Select(p=>p.Path.Substring(p.Path.LastIndexOf(@"Thermo\Nautilus\") + 16));
+            }
+            else if (value is ObservableCollection<string>)
+            {
+                temp = ((ObservableCollection<string>)value).Select(p=>p.Substring(p.LastIndexOf(@"Thermo\Nautilus\") + 16));
+            }
+            else
+            {
+                return string.Empty;
+            }
+
             return temp;
+
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -52,6 +52,15 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="OpcDaNetUaOption.Net4">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Thermo\Nautilus\OPC\ThermoOpcClient\OpcDaNetUaOption.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="OpcDaNetWpfUa.Net4">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Thermo\Nautilus\OPC\ThermoOpcClient\OpcDaNetWpfUa.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="OpcNetBase.Net4">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Thermo\Nautilus\OPC\ThermoOpcClient\OpcNetBase.Net4.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

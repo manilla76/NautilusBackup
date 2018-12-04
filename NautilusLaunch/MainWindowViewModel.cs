@@ -8,40 +8,85 @@ using BaseLibrary;
 
 namespace OmniLaunch
 {
-    class MainWindowViewModel
+    class MainWindowViewModel : ViewModelBase
     {
         private Branch nautilusCfg;
         private LauncherAppBrowserViewModel launcher = new LauncherAppBrowserViewModel();
-        private ObservableCollection<string> appList;
-        private ObservableCollection<string> startList;
+        private int selectedProgram;
+        public int SelectedProgram { get => selectedProgram; set => Set(ref selectedProgram, value); }
+        public ProgramModel SelectedItem { get => StartList[SelectedIndex]; }
+        private int selectedIndex;
+        public int SelectedIndex { get => selectedIndex; set => Set(ref selectedIndex, value); }
+        private ObservableCollection<ProgramModel> startList;
         private ICommand dragCommand;
         public ICommand DragCommand => dragCommand ?? (dragCommand = new RelayCommand((p)=> 
             {
 
             }));
 
-        
-        public ObservableCollection<string> AppList => appList;
-        public ObservableCollection<string> StartList { get => startList; }
-        public string SelectedItem { get; set; }
+        private ICommand appendCommand;
+        public ICommand AppendCommand => appendCommand ?? (appendCommand = new RelayCommand((p) =>
+        {
+            StartList.Add(new ProgramModel { Path = AppList[SelectedProgram], Parameters = string.Empty, StartType = StartType.none });            
+        }));
+        private ICommand insertCommand;
+        public ICommand InsertCommand => insertCommand ?? (insertCommand = new RelayCommand((p) =>
+        {
+            StartList.Insert(SelectedIndex, new ProgramModel { Path = AppList[SelectedProgram], Parameters = string.Empty, StartType = StartType.none });
+        }));
+        private ICommand deleteCommand;
+        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new RelayCommand((p) =>
+        {
+            StartList.RemoveAt(SelectedIndex);               
+            SelectedIndex = 0;
+        }));
+
+        public ObservableCollection<string> AppList { get; private set; }
+        public ObservableCollection<ProgramModel> StartList { get => startList; set => Set(ref startList, value); }
         public MainWindowViewModel()
         {
-            startList = new ObservableCollection<string>();
-            startList.Add(string.Empty);
-            SelectedItem = string.Empty;
+            try
+            {
+                
+                var temp = OPC.Common.ComApi.EnumComputers();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            startList = new ObservableCollection<ProgramModel>
+            {
+                new ProgramModel { Parameters = string.Empty, Path = string.Empty, StartType = StartType.none }
+            };
+            StartList.CollectionChanged += StartList_CollectionChanged;
+            SelectedIndex = 0;
             try
             {
                 InitConfiguraiton();  // Attempt to load the configuraiton.
+                SetupTestData();
             }
             catch (Exception)  // If fails, most likely due to Thermo Config service not running
             {
                 MessageBox.Show("CfgService not running. \nStart the Thermo Configuration Service and run OmniLaunch again.");
                 Application.Current.Shutdown();
             }
-            appList = launcher.AppList;
+            AppList = launcher.AppList;
 
         }
 
+        private void StartList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnProptertyChanged("StartList");            
+        }
+
+        private void SetupTestData()
+        {
+            startList.Clear();
+            startList.Add(new ProgramModel { Path = @"C:\Program Files (x86)\Thermo\Nautilus\Omni\Viewer\OmniView.exe", Parameters = "/administrator", StartType = StartType.none });
+            startList.Add(new ProgramModel { Path = @"C:\Program Files (x86)\Thermo\Nautilus\SpecAnalysis.exe", Parameters = string.Empty, StartType = StartType.none });
+            startList.Add(new ProgramModel { Path = @"C:\Program Files (x86)\Thermo\Nautilus\Car.exe", Parameters = string.Empty, StartType = StartType.none });
+            startList.Add(new ProgramModel { Path = @"C:\Program Files (x86)\Thermo\Nautilus\Opc\ThermoOpcClient\ThermoOpcClient.exe", Parameters = string.Empty, StartType = StartType.none });
+        }
         private void InitConfiguraiton()
         {
             nautilusCfg = Configuration.GetBranch("nautilus");

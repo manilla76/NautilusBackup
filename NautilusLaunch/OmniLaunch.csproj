@@ -55,6 +55,15 @@
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Blend.Interctivity.WPF.v4.0.1.0.3\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
+    <Reference Include="OpcDaNetUaOption.Net4">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Thermo\Nautilus\OPC\ThermoOpcClient\OpcDaNetUaOption.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="OpcDaNetWpfUa.Net4">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Thermo\Nautilus\OPC\ThermoOpcClient\OpcDaNetWpfUa.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="OpcNetBase.Net4">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Thermo\Nautilus\OPC\ThermoOpcClient\OpcNetBase.Net4.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -84,6 +93,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ProgramModel.cs" />
     <Compile Include="ValueConverters\FilePathToFileName.cs" />
     <Page Include="LauncherAppBrowserView.xaml">
       <SubType>Designer</SubType>

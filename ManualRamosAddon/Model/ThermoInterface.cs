@@ -39,7 +39,7 @@ namespace ManualRamosAddon.Model
         private static BlendingOptimizationSystem.BlendRecipe recipe = new BlendingOptimizationSystem.BlendRecipe();
         private static readonly List<Datapool.DPGroupTagValue> tagList = new List<Datapool.DPGroupTagValue>();
         private static readonly List<string> tagExclude = new List<string> { "analysisid", "ProductUniqueId", "DateBegin", "DateEnd", "SubName", "IsCalibration" };
-
+        
         public static bool AutoSerivceRestart { get => new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator); }
 
         public static void Init()
@@ -78,7 +78,11 @@ namespace ManualRamosAddon.Model
         }
         
         private static void Recipe_UpdateEvent(BlendingOptimizationSystem.BlendRecipe e)
-        {            
+        {
+            if (App.AppVM.SaveProfile == false)  // if profile saving is disabled...exit
+            {
+                return;
+            }
             if (profile != null && profile.ContainsKey(e.RecipeName))
             {
                 // get the profile for the new recipe (if exists), otherwise do nothing then update Ramos
@@ -87,6 +91,11 @@ namespace ManualRamosAddon.Model
         }
         private static void Feeders_UpdateEvent(BlendingOptimizationSystem.Feeders e)
         {
+            if (App.AppVM.SaveProfile == false)  // if profile saving is disabled...exit
+            {
+                return;
+            }
+
             // When the Feeder Configuration updates, update the dictionary.
             var tempFeeder = JsonConvert.SerializeObject(e);
             if (profile != null && profile.ContainsKey(recipe.RecipeName))
@@ -107,15 +116,22 @@ namespace ManualRamosAddon.Model
         {
             var tags = Datapool.DatapoolSvr.ReadTagNames();
             if (tags == null) return;
-            var group = tags.m_tagNames.Where((f) => f.m_group=="RAMOS.Predicted").ToList();
 
-            var temp = group.Select((f) => f.m_tag).ToList();
+            var g = OmniView.GetRecipeNameList().Items;
+
+            var h = g.Select((f) => OmniView.GetRecipe(f)).ToList();
+
+            var temp = h.SelectMany(f => f.Items.Select(p => p.QcName)).ToList();
+           
             if (temp == null)
                 return;
             oxides.Clear();
             foreach (var a in temp)
             {
-                oxides.Add(a);
+                if (oxides.Contains(a) == false)
+                {
+                    oxides.Add(a);
+                }
             }
         }
         private static void ProcessSolve()
@@ -182,6 +198,10 @@ namespace ManualRamosAddon.Model
         }
         private static void OnElapsedEvent(object sender, ElapsedEventArgs e)  // Runs every T (timer) seconds.  See Init() for T value.
         {
+            if (recipe.RecipeName == null)
+            {
+                recipe = OmniView.GetRaMOSRecipe();
+            }
             var results = OmniView.GetRaMOSFeederSetup();
             if (results == null) return;
             foreach (var feeder in SimpleIoc.Default.GetInstance<ApplicationViewModel>().Feeders)
@@ -320,10 +340,14 @@ namespace ManualRamosAddon.Model
         {
             try
             {
+                if (e.Exists == false)
+                {
+                    return;
+                }
                 BlendControl.BlendConfig blendControl = OmniView.GetRaMOSConfiguration();
                 blendControl.RecipeName = e.AsString;
                 OmniView.SetRaMOSConfiguration(blendControl);     // Set Recipe in OmniView
-                if (profile.ContainsKey(blendControl.RecipeName))
+                if (App.AppVM.SaveProfile == true && profile.ContainsKey(blendControl.RecipeName))
                 {
                     OmniView.SetRaMOSFeederSetup(profile[blendControl.RecipeName]);   // if feeder profile exists, set it in OmniView.
                 }
@@ -364,8 +388,24 @@ namespace ManualRamosAddon.Model
         }
         public static void LoadConfig()
         {
+            try
+            {
+                if (Thermo.Configuration.Configuration.GetBranch(@"Nautilus\RamosAddon").ValueNodes.Count != 0)
+                {
+                    LoadFromXML();
+                    return;
+                }
+            }
+            catch
+            { }
+            LoadFromSettings();
+        }
+
+        private static void LoadFromSettings()
+        {
             App.AppVM.NumFeeders = Properties.Settings.Default.NumFeeders;
             App.AppVM.ControlPeriod = Properties.Settings.Default.ControlPeriod;
+            App.AppVM.SaveProfile = Properties.Settings.Default.SaveProfile;
             App.AppVM.Kp = Properties.Settings.Default.Kp;
             App.AppVM.Ki = Properties.Settings.Default.Ki;
             App.AppVM.Kd = Properties.Settings.Default.Kd;
@@ -401,18 +441,23 @@ namespace ManualRamosAddon.Model
                 //catch { MessageBox.Show("newError"); }
                 return;
             }
-            App.AppVM.Feeders.Add(new FeederViewModel() { FeederNumber = Properties.Settings.Default.F1FeederNum, MaxDelta = Properties.Settings.Default.F1MaxDelta, Oxide = Properties.Settings.Default.F1Oxide, FeederAggression=Properties.Settings.Default.F1Agg });
+            App.AppVM.Feeders.Add(new FeederViewModel() { FeederNumber = Properties.Settings.Default.F1FeederNum, MaxDelta = Properties.Settings.Default.F1MaxDelta, Oxide = Properties.Settings.Default.F1Oxide, FeederAggression = Properties.Settings.Default.F1Agg });
             if (App.AppVM.NumFeeders < 2)
                 return;
             App.AppVM.Feeders.Add(new FeederViewModel() { FeederNumber = Properties.Settings.Default.F2FeederNum, MaxDelta = Properties.Settings.Default.F2MaxDelta, Oxide = Properties.Settings.Default.F2Oxide, FeederAggression = Properties.Settings.Default.F2Agg });
             if (App.AppVM.NumFeeders < 3)
                 return;
             App.AppVM.Feeders.Add(new FeederViewModel() { FeederNumber = Properties.Settings.Default.F3FeederNum, MaxDelta = Properties.Settings.Default.F3MaxDelta, Oxide = Properties.Settings.Default.F3Oxide, FeederAggression = Properties.Settings.Default.F3Agg });
+            return;
 
         }
+
         public static void SaveConfig()
         {
+            SaveToXML();
+            /*
             Properties.Settings.Default.ControlPeriod = App.AppVM.ControlPeriod;
+            Properties.Settings.Default.SaveProfile = App.AppVM.SaveProfile;
             Properties.Settings.Default.Kp = App.AppVM.Kp;
             Properties.Settings.Default.Ki = App.AppVM.Ki;
             Properties.Settings.Default.Kd = App.AppVM.Kd;
@@ -451,6 +496,7 @@ namespace ManualRamosAddon.Model
             //Properties.Settings.Default.F3Agg = App.AppVM.Feeders[2].FeederAggression;
 
             Properties.Settings.Default.Save();
+            */
             return;
             
         }
@@ -555,6 +601,42 @@ namespace ManualRamosAddon.Model
                 else
                     StartService(serviceName);
             }
+        }
+
+        private static void SaveToXML()
+        {
+            Thermo.Configuration.ThermoConfiguration config = new Thermo.Configuration.ThermoConfiguration
+            { BasePath = @"Nautilus\RamosAddon\" };
+            config.SetValue("", "SaveProfile", App.AppVM.SaveProfile);
+            config.SetValue("", "ControlPeriod", App.AppVM.ControlPeriod);
+            config.SetValue("", "Kp", App.AppVM.Kp);
+            config.SetValue("", "Ki", App.AppVM.Ki);
+            config.SetValue("", "Kd", App.AppVM.Kd);
+            config.SetValue("", "SwitchTag", JsonConvert.SerializeObject(App.AppVM.SwitchTag));
+            config.SetValue("", "StartTimeTag", JsonConvert.SerializeObject(App.AppVM.StartTimeTag));
+            config.SetValue("", "StopTimeTag", JsonConvert.SerializeObject(App.AppVM.StopTimeTag));
+            config.SetValue("", "CalculateTag", JsonConvert.SerializeObject(App.AppVM.CalculateTag));
+            config.SetValue("", "FeederProfiles", JsonConvert.SerializeObject(profile));
+            config.SetValue("", "NumFeeders", App.AppVM.Feeders.Count);
+            config.SetValue("", "Feeders", JsonConvert.SerializeObject(App.AppVM.Feeders));
+        }
+
+        private static void LoadFromXML()
+        {
+            Thermo.Configuration.ThermoConfiguration config = new Thermo.Configuration.ThermoConfiguration
+            { BasePath = @"Nautilus\RamosAddon" };
+            App.AppVM.SaveProfile = config.GetBoolean("", "SaveProfile", false);
+            App.AppVM.ControlPeriod = config.GetInt("", "ControlPeriod", 1);
+            App.AppVM.NumFeeders = config.GetInt("", "NumFeeders", 1);
+            App.AppVM.Kp = (float)config.GetDouble("", "Kp", 0);
+            App.AppVM.Ki = (float)config.GetDouble("", "Ki", 0);
+            App.AppVM.Kd = (float)config.GetDouble("", "Kd", 0);
+            App.AppVM.SwitchTag = JsonConvert.DeserializeObject<Datapool.DPGroupTagName>(config.GetString("", "SwitchTag", null));
+            App.AppVM.StartTimeTag = JsonConvert.DeserializeObject<Datapool.DPGroupTagName>(config.GetString("", "StartTimeTag", null));
+            App.AppVM.StopTimeTag = JsonConvert.DeserializeObject<Datapool.DPGroupTagName>(config.GetString("", "StopTimeTag", null));
+            App.AppVM.CalculateTag = JsonConvert.DeserializeObject<Datapool.DPGroupTagName>(config.GetString("", "CalculateTag", null));
+            profile = JsonConvert.DeserializeObject<Dictionary<string, BlendingOptimizationSystem.Feeders>>(config.GetString("", "FeederProfiles", null));
+            App.AppVM.Feeders = JsonConvert.DeserializeObject<ObservableCollection<FeederViewModel>>(config.GetString("", "Feeders", null));
         }
     }
 }

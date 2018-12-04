@@ -58,19 +58,12 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <TextBlock FontSize="36"
-                   FontWeight="Bold"
-                   Foreground="Purple"
-                   Text="{Binding WelcomeTitle}"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   TextWrapping="Wrap" />
         
         <Button Content="Add A Feeder" Command="{Binding Main.OpenCommand, Mode=OneWay}" Height="30" Width="80" 
                     HorizontalAlignment="Left" Margin="10,0,0,0"
                     CommandParameter="{Binding ElementName=MainWindow1}" DataContext="{Binding Source={StaticResource Locator}}"/>
 
-        <StackPanel VerticalAlignment="Bottom" Margin="2">
+        <StackPanel VerticalAlignment="Bottom" Margin="4">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Kp"/>
                 <TextBox Text="{Binding Kp}" Width="28" Margin="2,0,0,0"/>
@@ -88,6 +81,7 @@
                 <TextBox Text="{Binding ControlPeriod}" Width="20"/>
             </StackPanel>
             <TextBlock Text="{Binding SolveCount, StringFormat=SolveCount\= \{0\}}"/>
+            <CheckBox Margin="2,5,0,2" IsChecked="{Binding SaveProfile}" Content="Remember Recipe Profiles"/>
             <Expander Header="Automatic Recipe Switch">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Switch Tag"/>

@@ -26,6 +26,7 @@ namespace ManualRamosAddon
         private int controlPeriod;
         private int solveCount;
         internal float MaxError = 10;
+        private bool saveProfile = false;
 
         public int ControlPeriod { get => (controlPeriod < 1) ? 1 : controlPeriod; set => Set(ref controlPeriod, value); }
         public ObservableCollection<FeederViewModel> Feeders { get { return feeders; } set { feeders = value; RaisePropertyChanged("Feeders"); } }
@@ -38,6 +39,7 @@ namespace ManualRamosAddon
         public string RecipeSwitchGroup { get; set; }
         public string RecipeSwitchTag { get; set; }
         public string ErrorCode { get; set; }
+        public bool SaveProfile { get => saveProfile; set => Set(ref saveProfile, value); }
 
         private void SelectedTagUpdate(NotificationMessage<Datapool.DPGroupTagName> msg)
         {

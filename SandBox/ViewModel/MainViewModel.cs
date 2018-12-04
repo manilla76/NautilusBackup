@@ -121,6 +121,7 @@ namespace Sandbox.ViewModel
         /// </summary>
         public MainViewModel(IDataService dataService)
         {
+
             _dataService = dataService;
             _dataService.GetData(
                 (item, error) =>

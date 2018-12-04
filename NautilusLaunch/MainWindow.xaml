@@ -17,30 +17,37 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MinWidth="100"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>            
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <ListView Grid.Column="0" 
-                  ItemsSource="{Binding StartList}" 
-                  AllowDrop="True"
-                  Drop="StartList_Drop"   
-                  SelectionMode="Multiple">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Drop">
-                    <i:InvokeCommandAction Command="{Binding DragCommand}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+                  ItemsSource="{Binding StartList, Converter={StaticResource FilePathToFileName}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                  SelectedIndex="{Binding SelectedIndex}">
         </ListView>
-        <ListView Grid.Column="1" 
-                  ItemsSource="{Binding AppList, Converter={StaticResource FilePathToFileName}, Mode=OneWay}" 
-                  SelectedItem="{Binding SelectedItem}"/>
-
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" HorizontalAlignment="Center">
-            <Button Content="Save"/>
-            <Button Content="Run"/>
-            <Button Content="Exit"/>
+        <ListView Grid.Column="2" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ItemsSource="{Binding AppList, Converter={StaticResource FilePathToFileName}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedIndex="{Binding SelectedProgram}"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="3" HorizontalAlignment="Center">
+            <Button Content="Save" Margin="2"/>
+            <Button Content="Run" Margin="2"/>
+            <Button Content="Exit" Margin="2"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+            <Button Content="Append" 
+                    ToolTip="Insert Above Current Selection"
+                    Command="{Binding AppendCommand}"
+                    Margin="2"/>
+            <Button Content="Insert" 
+                    ToolTip="Add To End"
+                    Command="{Binding InsertCommand}"
+                    Margin="2"/>
+            <Button Content="Delete" 
+                    ToolTip="Delete Current Selection"
+                    Command="{Binding DeleteCommand}"
+                    Margin="2"/>
         </StackPanel>
     </Grid>
 </Window>
