@@ -23,11 +23,11 @@ namespace ThermoDpSQLReader.Model
                 conn.ConnectionString = "Server=" + Properties.Settings.Default.SqlServerAddress + ";Database=nautilus;Trusted_Connection=True;";
                 conn.Open();
                 using (SqlCommand cmd = new SqlCommand(insString, conn))
-                {                   
+                {
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        pileName = (string)reader["name"];                        
+                        pileName = (string)reader["name"];
                     }
                     return pileName;
                 }

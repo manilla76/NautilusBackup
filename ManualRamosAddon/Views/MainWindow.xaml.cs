@@ -1,7 +1,4 @@
 ﻿using System.Windows;
-using ManualRamosAddon;
-using GalaSoft.MvvmLight.Messaging;
-using System;
 
 namespace ManualRamosAddon
 {

@@ -1,7 +1,5 @@
-﻿using System.Windows;
-using SandBox.ViewModel;
-using GalaSoft.MvvmLight.Messaging;
-using System.Windows.Threading;
+﻿using SandBox.ViewModel;
+using System.Windows;
 
 namespace SandBox
 {
@@ -26,7 +24,7 @@ namespace SandBox
             {
                 App.Current.Shutdown();
             });
-            
+
         }
     }
 }

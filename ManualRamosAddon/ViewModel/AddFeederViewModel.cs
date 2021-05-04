@@ -1,7 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using System.Collections.ObjectModel;
-
-namespace ManualRamosAddon
+﻿namespace ManualRamosAddon
 {
     /// <summary>
     /// This class contains properties that a View can data bind to.

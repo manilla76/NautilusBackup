@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NautilusBackup", "NautilusBackup\NautilusBackup.csproj", "{C019B350-1882-4160-9038-F25F729B336D}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestNotifyIcon", "TestNotifyIcon\TestNotifyIcon.csproj", "{33CB3CA9-98A5-4A22-A247-9E04EAE3F056}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManualRamosAddon", "ManualRamosAddon\ManualRamosAddon.csproj", "{3CACC45E-2C18-4800-ACB3-937B1154B767}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RamosExtension", "RamosExtension\RamosExtension.csproj", "{9A1F2DD8-191F-4A5A-B0C8-61778A22471B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{3CACC45E-2C18-4800-ACB3-937B1154B767}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CACC45E-2C18-4800-ACB3-937B1154B767}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CACC45E-2C18-4800-ACB3-937B1154B767}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A1F2DD8-191F-4A5A-B0C8-61778A22471B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A1F2DD8-191F-4A5A-B0C8-61778A22471B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A1F2DD8-191F-4A5A-B0C8-61778A22471B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A1F2DD8-191F-4A5A-B0C8-61778A22471B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

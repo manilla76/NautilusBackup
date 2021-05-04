@@ -1,8 +1,4 @@
-﻿using System;
-using GalaSoft.MvvmLight;
-using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Messaging;
+﻿using System.Collections.ObjectModel;
 
 namespace ManualRamosAddon
 {
@@ -23,7 +19,7 @@ namespace ManualRamosAddon
         private const string SourcesPropertyName = "Sources";
         private ObservableCollection<SourceData> sources = new ObservableCollection<SourceData>();
         private ObservableCollection<string> oxides = new ObservableCollection<string>() { "Al2O3", "CaO", "Fe2O3", "MgO", "SiO2", "LSF", "C3S", "Alkali" };
-        
+
         public string Oxide { get => oxide; set => Set(ref oxide, value); }
         public string SourceEstmiateName { get => Sources[FeederNumber].SourceEstimateName; }
         public int FeederNumber { get => feederNumber; set => Set(ref feederNumber, value); }
@@ -31,7 +27,7 @@ namespace ManualRamosAddon
         public float MaxDelta { get => maxDelta; set => Set(ref maxDelta, value); }
         public float CurrentDemand { get => currentDemand; set => Set(ref currentDemand, value); }
         public bool IsManual { get => isManual; set => Set(ref isManual, value); }
-        public ObservableCollection<SourceData> Sources { get => sources; } 
+        public ObservableCollection<SourceData> Sources { get => sources; }
         public ObservableCollection<string> Oxides { get => oxides; }
         public float Error = 0f, PrevError = 0f, ErrorSum = 0f;
 
@@ -55,7 +51,7 @@ namespace ManualRamosAddon
             App.AppVM.NewFeeder = this;
             Messenger.Default.Send(new NotificationMessage("Show Dialog"));
             Model.ThermoInterface.SaveConfig();
-  
+
         }));
 
         private RelayCommand deleteCommand;

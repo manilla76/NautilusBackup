@@ -9,12 +9,7 @@
   DataContext="{Binding Source={StaticResource Locator}, Path=ViewModelName}"
 */
 
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
 using ManualRamosAddon.Model;
-using System.Windows;
-using System;
 
 namespace ManualRamosAddon.ViewModel
 {
@@ -39,14 +34,14 @@ namespace ManualRamosAddon.ViewModel
             "CA1822:MarkMembersAsStatic",
             Justification = "This non-static member is needed for data binding purposes.")]
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
-          
+
         /// <summary>
         /// Gets the Feeder property.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
             "CA1822:MarkMembersAsStatic",
             Justification = "This non-static member is needed for data binding purposes.")]
-        public FeederViewModel Feeder => ServiceLocator.Current.GetInstance<FeederViewModel>();                  
+        public FeederViewModel Feeder => ServiceLocator.Current.GetInstance<FeederViewModel>();
 
         /// <summary>
         /// Gets the AppVM property.

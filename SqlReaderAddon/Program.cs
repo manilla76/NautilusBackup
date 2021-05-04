@@ -1,12 +1,5 @@
-﻿using NDesk.Options;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Data.SqlClient;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using Thermo.Datapool;
-using static Thermo.Datapool.Datapool;
 
 namespace SqlReaderAddon
 {

@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using ManualRamosAddon.Model;
+﻿using ManualRamosAddon.Model;
 using System.Collections.ObjectModel;
 
 namespace ManualRamosAddon

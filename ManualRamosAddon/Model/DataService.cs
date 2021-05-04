@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace ManualRamosAddon.Model
@@ -18,7 +16,7 @@ namespace ManualRamosAddon.Model
         public async Task<string> GetDataAsync()
         {
             throw new NotImplementedException();
-            await Task.Delay(1);            
+            await Task.Delay(1);
         }
-    }    
+    }
 }

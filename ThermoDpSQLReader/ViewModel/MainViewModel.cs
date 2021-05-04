@@ -1,11 +1,7 @@
-﻿using GalaSoft.MvvmLight;
-using ThermoDpSQLReader.Model;
-using Thermo.Datapool;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using System.ComponentModel;
 using System.Windows.Input;
-using System.ComponentModel;
-using GalaSoft.MvvmLight.Messaging;
-using System;
+using Thermo.Datapool;
+using ThermoDpSQLReader.Model;
 
 namespace ThermoDpSQLReader.ViewModel
 {
@@ -61,7 +57,7 @@ namespace ThermoDpSQLReader.ViewModel
         public string SqlServer
         {
             get => sqlServer;
-            
+
             set
             {
                 if (sqlServer == value)
@@ -76,8 +72,8 @@ namespace ThermoDpSQLReader.ViewModel
         private readonly IDataService dataService;
 
         /// <summary>
-            /// The <see cref="ReadGroup" /> property's name.
-            /// </summary>
+        /// The <see cref="ReadGroup" /> property's name.
+        /// </summary>
         public const string ReadGroupPropertyName = "ReadGroup";
 
         private string readGroup = Properties.Settings.Default.ReadGroup;
@@ -89,10 +85,10 @@ namespace ThermoDpSQLReader.ViewModel
         public string ReadGroup
         {
             get => readGroup;
-            
+
             set
             {
-                if ( readGroup == value)
+                if (readGroup == value)
                 {
                     return;
                 }
@@ -116,22 +112,22 @@ namespace ThermoDpSQLReader.ViewModel
         public string ReadTag
         {
             get => readTag;
-            
+
             set
             {
                 if (readTag == value)
                 {
                     return;
                 }
-                
+
                 readTag = value;
                 RaisePropertyChanged(ReadTagPropertyName);
             }
         }
 
         /// <summary>
-            /// The <see cref="WriteGroup" /> property's name.
-            /// </summary>
+        /// The <see cref="WriteGroup" /> property's name.
+        /// </summary>
         public const string WriteGroupPropertyName = "WriteGroup";
 
         private string writeGroup = Properties.Settings.Default.WriteGroup;
@@ -143,7 +139,7 @@ namespace ThermoDpSQLReader.ViewModel
         public string WriteGroup
         {
             get => writeGroup;
-            
+
             set
             {
                 if (writeGroup == value)
@@ -157,8 +153,8 @@ namespace ThermoDpSQLReader.ViewModel
         }
 
         /// <summary>
-            /// The <see cref="WriteTag" /> property's name.
-            /// </summary>
+        /// The <see cref="WriteTag" /> property's name.
+        /// </summary>
         public const string WriteTagPropertyName = "WriteTag";
 
         private string writeTag = Properties.Settings.Default.WriteTag;
@@ -170,14 +166,14 @@ namespace ThermoDpSQLReader.ViewModel
         public string WriteTag
         {
             get => writeTag;
-            
+
             set
             {
                 if (writeTag == value)
                 {
                     return;
                 }
-                
+
                 writeTag = value;
                 RaisePropertyChanged(WriteTagPropertyName);
             }
@@ -189,7 +185,7 @@ namespace ThermoDpSQLReader.ViewModel
         public const string WelcomeTitlePropertyName = "WelcomeTitle";
 
         private string _welcomeTitle = string.Empty;
-        
+
         /// <summary>
         /// Gets the WelcomeTitle property.
         /// Changes to that property's value raise the PropertyChanged event. 

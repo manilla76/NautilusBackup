@@ -10,7 +10,7 @@ namespace ManualRamosAddon.ValueConverters
         {
             if (value is bool)
                 return ((bool)value == true) ? ThermoWpfWidgets.BulbWidget.BulbStatus.Ok : ThermoWpfWidgets.BulbWidget.BulbStatus.Error;
-            
+
             return ThermoWpfWidgets.BulbWidget.BulbStatus.Unknown;
         }
 

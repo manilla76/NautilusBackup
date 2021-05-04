@@ -1,10 +1,5 @@
-﻿using System.Windows;
-using GalaSoft.MvvmLight.Threading;
-using Hardcodet.Wpf.TaskbarNotification;
-using GalaSoft.MvvmLight.Messaging;
-using System;
-using Thermo.Configuration;
-using System.Collections.Generic;
+﻿using System;
+using System.Windows;
 
 namespace ThermoDpSQLReader
 {

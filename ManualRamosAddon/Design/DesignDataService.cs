@@ -1,8 +1,6 @@
-﻿using System;
-using ManualRamosAddon.Model;
+﻿using ManualRamosAddon.Model;
+using System;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
 
 namespace ManualRamosAddon.Design
 {

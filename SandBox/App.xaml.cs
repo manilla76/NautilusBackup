@@ -1,6 +1,4 @@
 ﻿using System.Windows;
-using GalaSoft.MvvmLight.Threading;
-using Hardcodet.Wpf.TaskbarNotification;
 
 namespace SandBox
 {
@@ -14,7 +12,7 @@ namespace SandBox
         {
             DispatcherHelper.Initialize();
         }
-        
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);

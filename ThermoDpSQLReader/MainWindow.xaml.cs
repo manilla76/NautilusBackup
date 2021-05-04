@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight.Messaging;
-using System.Windows;
+﻿using System.Windows;
 using ThermoDpSQLReader.ViewModel;
 
 namespace ThermoDpSQLReader

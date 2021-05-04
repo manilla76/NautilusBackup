@@ -1,7 +1,4 @@
 ﻿using System.Windows;
-using GalaSoft.MvvmLight.Threading;
-using GalaSoft.MvvmLight.Ioc;
-using Hardcodet.Wpf.TaskbarNotification;
 
 namespace ManualRamosAddon
 {

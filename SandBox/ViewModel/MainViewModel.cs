@@ -1,11 +1,5 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Messaging;
-using SandBox.Model;
-using System.ComponentModel;
+﻿using SandBox.Model;
 using System.Windows;
-using System.Windows.Input;
-using Thermo.Datapool;
 
 namespace Sandbox.ViewModel
 {
@@ -29,12 +23,12 @@ namespace Sandbox.ViewModel
             if (e.AsBoolean == true)
             {
                 Cleanup();
-                Messenger.Default.Send<string>("shutdown");            
+                Messenger.Default.Send<string>("shutdown");
             }
         }
         /// <summary>
-            /// The <see cref="DpConnected" /> property's name.
-            /// </summary>
+        /// The <see cref="DpConnected" /> property's name.
+        /// </summary>
         public const string DpConnectedPropertyName = "DpConnected";
 
         private bool dpConnected = Datapool.DatapoolSvr.IsConnected;
@@ -212,7 +206,7 @@ namespace Sandbox.ViewModel
             // Clean up if needed
             terminateTag.Dispose();
             Datapool.DatapoolSvr.Dispose();
-            base.Cleanup();            
+            base.Cleanup();
         }
     }
 }

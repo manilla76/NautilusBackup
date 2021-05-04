@@ -1,12 +1,10 @@
-﻿using GalaSoft.MvvmLight.Ioc;
+﻿using BlendingOptimizationEngine;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Timers;
 using static ThermoArgonautLibrary.CommonSystem;
 using static ThermoArgonautViewerLibrary.CommonSystemViewer;
-using BlendingOptimizationEngine;
-using System;
-using Thermo.Datapool;
 
 namespace ManualRamosAddon.Model
 {
@@ -20,9 +18,9 @@ namespace ManualRamosAddon.Model
 
         public static void Init()
         {
-            T = new Timer();            
+            T = new Timer();
             T.Interval = 5000; // 5 sec   5*1000ms
-            T.Enabled = true;            
+            T.Enabled = true;
             T.Elapsed += new ElapsedEventHandler(onElapsedEvent);
             Ramos = new BOSCtrl(null);
             Ramos.SolveReport.UpdateEvent += SolveReport_UpdateEvent;
@@ -34,7 +32,7 @@ namespace ManualRamosAddon.Model
         {
             var tags = Datapool.DatapoolSvr.ReadTagNames();
             if (tags == null) return;
-            var group = tags.m_tagNames.Where((f) => f.m_group=="RAMOS.Predicted").ToList();
+            var group = tags.m_tagNames.Where((f) => f.m_group == "RAMOS.Predicted").ToList();
 
             var temp = group.Select((f) => f.m_tag).ToList();
             if (temp == null)
@@ -48,7 +46,7 @@ namespace ManualRamosAddon.Model
 
         private static void SolveReport_UpdateEvent(BlendControl.SolveReport e)
         {
-            App.AppVM.SolveCount++;            
+            App.AppVM.SolveCount++;
             if (App.AppVM.SolveCount >= App.AppVM.ControlPeriod)
             {
                 App.AppVM.SolveCount = 0;
@@ -73,12 +71,12 @@ namespace ManualRamosAddon.Model
 
                 double rolling;
                 Datapool.DatapoolSvr.Read("Rolling.Analysis1." + (basis ? "Loss free" : "Dry basis"), feeder.Oxide, out rolling);
-                
+
                 // get current demand for this feeder
                 double demand = Ramos.SolveReport.Feeder[feeder.FeederNumber].Demand * 100;
                 // compare
                 // calculate new demand
-                 
+
                 if (setpoint + tolerance < rolling)
                 {
                     feeder.Error = (float)(setpoint - rolling); // above target (error < 0)
@@ -104,7 +102,7 @@ namespace ManualRamosAddon.Model
                 //double offset = diff * feeder.FeederAggression / 1000;
                 //demand += (offset >= 0) ? ((offset > feeder.MaxDelta) ? feeder.MaxDelta : offset) : ((offset < -(feeder.MaxDelta)) ? -(feeder.MaxDelta) : offset);
                 //// write demand
-                Datapool.DatapoolSvr.Write("RAMOS.Feeder.Read", "Set fixed rate% #" + (feeder.FeederNumber+1).ToString(), demand);
+                Datapool.DatapoolSvr.Write("RAMOS.Feeder.Read", "Set fixed rate% #" + (feeder.FeederNumber + 1).ToString(), demand);
             }
         }
 
@@ -151,7 +149,7 @@ namespace ManualRamosAddon.Model
             {
 
                 App.Current.MainWindow.Close();
-            }            
+            }
 
         }
 
@@ -175,7 +173,7 @@ namespace ManualRamosAddon.Model
                 //catch { MessageBox.Show("newError"); }
                 return;
             }
-            App.AppVM.Feeders.Add(new FeederViewModel() { FeederNumber = Properties.Settings.Default.F1FeederNum, MaxDelta = Properties.Settings.Default.F1MaxDelta, Oxide = Properties.Settings.Default.F1Oxide, FeederAggression=Properties.Settings.Default.F1Agg });
+            App.AppVM.Feeders.Add(new FeederViewModel() { FeederNumber = Properties.Settings.Default.F1FeederNum, MaxDelta = Properties.Settings.Default.F1MaxDelta, Oxide = Properties.Settings.Default.F1Oxide, FeederAggression = Properties.Settings.Default.F1Agg });
             if (App.AppVM.NumFeeders < 2)
                 return;
             App.AppVM.Feeders.Add(new FeederViewModel() { FeederNumber = Properties.Settings.Default.F2FeederNum, MaxDelta = Properties.Settings.Default.F2MaxDelta, Oxide = Properties.Settings.Default.F2Oxide, FeederAggression = Properties.Settings.Default.F2Agg });
@@ -255,14 +253,14 @@ namespace ManualRamosAddon.Model
 
             Properties.Settings.Default.Save();
             return;
-            
+
         }
         public static void CloseApp()
         {
             if (SwitchTag != null)
-            {                
+            {
                 SwitchTag.Dispose();
-            }            
+            }
         }
     }
 }

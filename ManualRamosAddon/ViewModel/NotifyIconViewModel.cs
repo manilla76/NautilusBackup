@@ -34,7 +34,7 @@ namespace ManualRamosAddon.ViewModel
 
         public NotifyIconViewModel()
         {
-            
+
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace ManualRamosAddon.ViewModel
         /// </summary>
         public ICommand ExitApplicationCommand => new DelegateCommand { CommandAction = () => OnExiting(this, EventArgs.Empty) };
     }
-    
+
     /// <summary>
     /// Simplistic delegate command for the demo.
     /// </summary>

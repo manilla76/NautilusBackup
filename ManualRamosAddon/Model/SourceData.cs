@@ -1,16 +1,11 @@
-﻿using GalaSoft.MvvmLight;
-using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-namespace ManualRamosAddon
+﻿namespace ManualRamosAddon
 {
-    public class SourceData:ViewModelBase
+    public class SourceData : ViewModelBase
     {
         private int feederNumber;
         private string sourceEstimateName;
-        public string SourceEstimateName { get=> sourceEstimateName; set=>Set(ref sourceEstimateName, value); }
-        public int FeederNumber { get=>feederNumber; set=>Set(ref feederNumber,value); }
+        public string SourceEstimateName { get => sourceEstimateName; set => Set(ref sourceEstimateName, value); }
+        public int FeederNumber { get => feederNumber; set => Set(ref feederNumber, value); }
         public SourceData()
         {
 

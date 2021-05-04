@@ -1,5 +1,5 @@
-﻿using System;
-using SandBox.Model;
+﻿using SandBox.Model;
+using System;
 
 namespace SandBox.Design
 {
